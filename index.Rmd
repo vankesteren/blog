@@ -5,6 +5,9 @@ output:
     theme: journal
     includes:
       in_header: header.html
+    pandoc_args: [
+      "--title-prefix", "Erik-Jan van Kesteren - Blog"
+    ]
 ---
 
 
