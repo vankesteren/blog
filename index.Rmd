@@ -78,13 +78,12 @@ while(x=eval(x));
 <br/>
 
 Here are some links to statistics-related things I enjoy: 
-
-- [JASP](https://jasp-stats.org)
-- [Young Statisticians Netherlands](http://youngstatisticians.nl)
-- [Explained Visually](http://setosa.io/ev/)
-- [The Etz-Files](https://alexanderetz.com/)
-- [Richard Morey](https://richarddmorey.org/)
-- [r/dataisbeautiful](https://www.reddit.com/r/dataisbeautiful/)
-- [Jeff Rouder](http://jeffrouder.blogspot.com)
-- [A Compendium of Clean Graphs](http://shinyapps.org/apps/RGraphCompendium/index.php).
+[JASP](https://jasp-stats.org),
+[Young Statisticians Netherlands](http://youngstatisticians.nl),
+[Explained Visually](http://setosa.io/ev/),
+[The Etz-Files](https://alexanderetz.com/),
+[Richard Morey](https://richarddmorey.org/),
+[r/dataisbeautiful](https://www.reddit.com/r/dataisbeautiful/),
+[Jeff Rouder](http://jeffrouder.blogspot.com),
+[A Compendium of Clean Graphs](http://shinyapps.org/apps/RGraphCompendium/index.php).
 
