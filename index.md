@@ -81,4 +81,5 @@ Here are some links to statistics-related things I enjoy:
 <center>
 code for this website can be found on [github](https://github.com/vankesteren/blog/)
 </center>
+<hr/>
 
