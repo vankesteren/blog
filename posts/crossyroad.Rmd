@@ -1,0 +1,74 @@
+---
+title: "Crossy Road"
+author: "Erik-Jan van Kesteren"
+output: 
+  html_document: 
+    code_folding: hide
+    keep_md: yes
+    theme: journal
+---
+
+```{r, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
+cr <- read.csv("cr.csv")
+library(fitdistrplus)
+library(MASS)
+```
+
+###[Back](../index.html)
+
+## Negative Binomial
+
+I played [Crossy Road](http://www.crossyroad.com/) a _lot_ with my girlfriend while on holiday. I wanted to know what kind of distribution our scores follow, so I decided to record our scores for a while. A Negative Binomial distribution fits these scores very well! 
+This also agrees with the interpretation of the negative binomial of **the amount of
+successful trials before a certain amount of failures**, which is indeed the process governing 
+the Crossy Road scores: one jump is a successful trial, and you need 2 failures (both players) to end!
+See below how well it fits.
+
+```{r,fig.align='center',tidy=TRUE, dpi = 400, fig.height=3.5}
+nb <- fitdist(data = cr$Crossy, distr = "nbinom")
+summary(nb)
+plot(nb)
+```
+
+We can make a nice(ish) plot out of it, too:
+
+```{r,fig.align='center', dpi=400}
+
+curve <- dnbinom(1:(max(cr$Crossy+10)),size = coef(nb)[1], mu = coef(nb)[2])
+
+hist(cr$Crossy, breaks = "FD", xlim = c(0,max(cr$Crossy)+10), 
+     main = "Crossy Road", xlab = "Points on Multiplayer Game", col = "#BAFABA", 
+     border = "#BAFABA")
+par(new = T)
+plot(curve, xlim = c(0,max(cr$Crossy)+10), type = "l",
+      bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n", col = "blue", 
+      main = "")
+par(new = T)
+plot(density(cr$Crossy), xlim = c(0,max(cr$Crossy)+10), main = "",
+     bty = "n", xlab = "", ylab = "", xaxt = "n", yaxt = "n", col = "red")
+legend("topright", legend = c(paste("nbinom(",round(coef(nb)[1]),", ",
+                                    round(coef(nb)[2]),")",sep = ""),
+                              "density estimate"), fill = c("blue","red"),
+       bty = "n", border = "#FFFFFF")
+```
+
+We can see if the time variable has an influence on our scores using a negative binomial
+regression. In other words, we can test the hypothesis that we get better at the game over time.
+
+```{r, fig.align='center', dpi=400}
+fit <- glm.nb(Crossy~Time, cr)
+summary(fit)
+plot(cr$Time, cr$Crossy, col = "dark green", bty = "L", ylab = "Score", xlab= "Time", 
+     main = "Change in Scores over Time")
+abline(exp(coef(fit)), col = "blue")
+```
+
+You can draw your own conclusions from this. Thanks for reading!
+
+Questions that remained:
+
+1. Does the shape parameter change with different amounts of players?
+
+2. How can we incorporate the dependence between consecutive trials? (NB assumes i.i.d. Bernoulli trials)
+
+3. In Crossy Road you both have to die within a short distance. Can this be in the model?
