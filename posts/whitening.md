@@ -96,7 +96,7 @@ blue <- function(x, y) dmvnorm(cbind(x, y), c(0.6, -0.6), matrix(c(1, 0.7, 0.7,
 green <- function(x, y) dmvnorm(cbind(x, y), c(-0.6, 0.6), matrix(c(1, 0.7, 
     0.7, 1), ncol = 2))
 
-precision <- 100
+precision <- 1000
 
 colblue <- colorRamp(c("#1E90FF88", "#00008BDD"), alpha = T)(seq(0, 1, 0.001))
 colgreen <- colorRamp(c("#32CD3288", "#006400DD"), alpha = T)(seq(0, 1, 0.001))
