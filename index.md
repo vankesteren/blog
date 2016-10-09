@@ -33,9 +33,8 @@
 [#### An app to visualise different probability distributions]: #
 
 
-[## [whitening](posts/whitening.html)]: #
-
-[#### An in-depth exploration of data whitening, with applications in feature selection]: #
+## [whitening](posts/whitening.html)
+#### An in-depth exploration of data whitening, with applications in feature selection
 
 
 ## [crossy road](posts/crossyroad.html)
@@ -46,7 +45,7 @@
 <br/>
 
 
-<h1><center> <span style="color:#00008B">About</span> </center></h1>
+<h1 id="About"><center> <span style="color:#00008B">About</span> </center></h1>
 
 <hr/>
 
