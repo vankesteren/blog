@@ -233,7 +233,7 @@ As can be seen from the plots, the whitened data shows a stronger differentiatio
 
 Using this trick, Zuber and Strimmer (2009) developed the *correlation-adjusted t-score*, or cat score, which extends the *t*-score as follows:
 
-$$\text{cat} = \mathbf{P}^{-1/2}\mathbf{V}^{-1/2}(\vec{\mu}_{green}-\vec{\mu}_{blue})$$
+$$\text{cat} = c \cdot \mathbf{P}^{-1/2}\mathbf{V}^{-1/2}(\vec{\mu}_{green}-\vec{\mu}_{blue})$$
 
 In their original paper, they show that this indeed works better than the unadjusted t-score in a variety of settings. One assumption that this procedure has is that it assumes equal variance in both classes. This might be something to work on!
 
