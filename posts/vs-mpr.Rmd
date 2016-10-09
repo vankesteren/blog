@@ -1,0 +1,30 @@
+---
+title: "Vovk-Sellke Maximum *p*-Ratio"
+author: "Erik-Jan van Kesteren"
+output:
+  html_document:
+    code_folding: hide
+    keep_md: yes
+    theme: journal
+    includes:
+      in_header: postheader.html
+---
+
+```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = 'svg')
+```
+
+###[Back to index](../index.html)
+
+## Introduction
+Here is the intro and where I got the inspiration
+
+## Here is how it works
+Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).
+
+<iframe src="https://erikjan.shinyapps.io/VS-MPR/" style="border: none; width: 80%; height: 525px;margin-left: auto;margin-right: auto;display: block;overflow: hidden;" scrolling="no"></iframe>
+
+test test
+
+###[Back to index](../index.html)
