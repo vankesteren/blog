@@ -18,11 +18,10 @@ output:
 
 # <span style="color:#00008B">Erik-Jan van Kesteren</span>
 
-#### Blogging about statistics with R. (and other things I find interesting)
+#### Blogging about statistics with R (and other things I find interesting)
 
+<img src="img/header-img.svg" width="100%"></img>
 
----
-<br/>
 
 # <span style="color:#00008B">Blog posts</span>
 </center>

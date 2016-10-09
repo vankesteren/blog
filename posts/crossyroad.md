@@ -6,6 +6,7 @@ Erik-Jan van Kesteren
 ###[Back to index](../index.html)
 
 ## Introduction
+
 Welcome to my blog! I've had this post for a while and now I decided to actually put it up. I really enjoyed making it, and I hope you enjoy reading it and learn a bit more about the negative binomial distribution like I did.
 
 ## Negative Binomial
@@ -54,6 +55,7 @@ legend("topright", legend = c(paste("nbinom(",round(coef(nb)[1]),", ",
 <img src="crossyroad_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 ## Negative Binomial Regression
+
 We can see if the time variable has an influence on our scores using a negative binomial
 regression. This type of regression assumes that the errors are distributed according to a negative binomial distribution. In this way, we can test the hypothesis that we get better at the game over time.
 
