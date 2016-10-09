@@ -176,3 +176,6 @@ plot(dfwhite, xlab = "Gene a", ylab = "Gene b", main = "Whitened data",
      pch=19, col = "#1E90FF88", cex.lab=2, cex.main=2, cex.axis=1.5)
 
 ```
+
+
+###[Back to index](../index.html)

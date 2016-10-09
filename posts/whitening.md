@@ -159,3 +159,6 @@ plot(dfwhite, xlab = "Gene a", ylab = "Gene b", main = "Whitened data",
 ```
 
 <img src="whitening_files/figure-html/whitening-1.png" style="display: block; margin: auto;" />
+
+
+###[Back to index](../index.html)
