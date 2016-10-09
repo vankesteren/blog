@@ -82,3 +82,6 @@ Questions that remained for me, maybe you can generate some ideas:
 2. How can we incorporate the dependence between consecutive trials? (NB assumes i.i.d. Bernoulli trials)
 
 3. In Crossy Road you both have to die within a short distance of each other. Can this modelled?
+
+
+###[Back to index](../index.html)
