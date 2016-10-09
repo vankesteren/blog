@@ -6,6 +6,8 @@ output:
     code_folding: hide
     keep_md: yes
     theme: journal
+    includes:
+      in_header: postheader.html
 header-includes: 
   - \usepackage{bm}
 ---
