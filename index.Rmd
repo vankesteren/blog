@@ -3,6 +3,8 @@ output:
   html_document:
     keep_md: yes
     theme: journal
+    includes:
+      in_header: header.html
 ---
 
 
