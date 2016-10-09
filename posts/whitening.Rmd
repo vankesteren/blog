@@ -8,8 +8,6 @@ output:
     theme: journal
     includes:
       in_header: postheader.html
-header-includes: 
-  - \usepackage{bm}
 ---
 
 ```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}

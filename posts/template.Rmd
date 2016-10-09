@@ -1,0 +1,38 @@
+---
+title: "Template"
+author: "Erik-Jan van Kesteren"
+output:
+  html_document:
+    code_folding: hide
+    keep_md: yes
+    theme: journal
+    includes:
+      in_header: postheader.html
+---
+
+```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = 'svg')
+```
+
+###[Back to index](../index.html)
+
+## Introduction
+Here is the intro and where I got the inspiration
+
+## The post
+Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).
+```{r png, tidy=TRUE, dpi = 400, dev='png'}
+
+plot(rnorm(1000))
+
+```
+
+With few points, it's better to use the standard svg.
+```{r svg, tidy=TRUE}
+
+barplot(c(2,4,6,5,1), col="#00008B", border = "#00008B")
+
+```
+
+###[Back to index](../index.html)
