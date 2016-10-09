@@ -77,3 +77,8 @@ Here are some links to statistics-related things I enjoy:
 [Jeff Rouder](http://jeffrouder.blogspot.com),
 [A Compendium of Clean Graphs](http://shinyapps.org/apps/RGraphCompendium/index.php).
 
+<hr/>
+<center>
+code for this website can be found on [github](https://github.com/vankesteren/blog/)
+</center>
+
