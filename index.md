@@ -3,7 +3,7 @@
 
 <center>
 <br/>
-<img src="bloglogo.svg" width=100></img>
+<img src="img/bloglogo.svg" width=100></img>
 
 # <span style="color:#00008B">Erik-Jan van Kesteren</span>
 
@@ -19,13 +19,28 @@
 
 <div class="container">
 
+[## [vovk-sellke maximum *p*-ratio](posts/vs-mpr.html)]: #
+
+[#### A more precise way to report the information contained in the *p*-value]: #
 
 
-## [whitening](posts/whitening.html)
-#### An in-depth analysis of data whitening for feature selection
+[## [blim](posts/blim.html)]: #
+
+[### Bayesian linear models made easy and fast]: #
+
+
+[## [densy](posts/densy.html)]: #
+
+[#### An app to visualise different probability distributions]: #
+
+
+[## [whitening](posts/whitening.html)]: #
+
+[#### An in-depth exploration of data whitening, with applications in feature selection]: #
+
 
 ## [crossy road](posts/crossyroad.html)
-#### A fun analysis of crossy road data
+#### Learning about the negative binomial distribution using a fun dataset
 
 </div>
 
@@ -36,6 +51,6 @@
 
 <hr/>
 <div class="container">
-Here are some links I enjoy [JASP](https://jasp-stats.org), [Young Statisticians](http://youngstatisticians.nl)
+Here are some links to statistics-related things I enjoy: [JASP](https://jasp-stats.org), [Young Statisticians Netherlands](http://youngstatisticians.nl), [Explained Visually](http://setosa.io/ev/), [The Etz-Files](https://alexanderetz.com/), [Richard Morey](https://richarddmorey.org/), [r/dataisbeautiful](https://www.reddit.com/r/dataisbeautiful/), [Jeff Rouder](http://jeffrouder.blogspot.com), [A Compendium of Clean Graphs](http://shinyapps.org/apps/RGraphCompendium/index.php).
 
 </div>

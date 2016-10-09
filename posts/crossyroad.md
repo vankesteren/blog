@@ -3,7 +3,10 @@ Erik-Jan van Kesteren
 
 
 
-###[Back](../index.html)
+###[Back to index](../index.html)
+
+## Introduction
+Welcome to my blog! I've had this post for a while and now I decided to actually put it up. I really enjoyed making it, and I hope you enjoy reading it and learn a bit more about the negative binomial distribution like I did.
 
 ## Negative Binomial
 
@@ -11,37 +14,25 @@ I played [Crossy Road](http://www.crossyroad.com/) a _lot_ with my girlfriend wh
 This also agrees with the interpretation of the negative binomial of **the amount of
 successful trials before a certain amount of failures**, which is indeed the process governing 
 the Crossy Road scores: one jump is a successful trial, and you need 2 failures (both players) to end!
+The fit is from a negative binomial distribution with mean 145 and size 2. In fancy math notation, that would be as follows:
+$$\frac{\Gamma(x+2)}{\Gamma(2)\cdot x!} \cdot \left( \frac{2}{2+145} \right)^2 \cdot \left( 1-\frac{2}{2+145} \right)^x$$
+
 See below how well it fits.
 
 
 ```r
 nb <- fitdist(data = cr$Crossy, distr = "nbinom")
-summary(nb)
-```
-
-```
-## Fitting of the distribution ' nbinom ' by maximum likelihood 
-## Parameters : 
-##        estimate Std. Error
-## size   2.000918   0.254252
-## mu   145.491423   9.743531
-## Loglikelihood:  -663.4684   AIC:  1330.937   BIC:  1336.392 
-## Correlation matrix:
-##               size            mu
-## size  1.0000000000 -0.0002881859
-## mu   -0.0002881859  1.0000000000
-```
-
-```r
+par(family = "serif")
 plot(nb)
 ```
 
-<img src="crossyroad_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+<img src="crossyroad_files/figure-html/unnamed-chunk-2-1.svg" style="display: block; margin: auto;" />
 
-We can make a nice(ish) plot out of it, too:
+In the right panel displaying the empirical and theoretical cumulative distribution functions you can see that the data fits the distribution extremely well! To show this even better, I'll plot a raw data histogram with this negative binomial distribution function plotted over the top:
 
 
 ```r
+par(family="serif")
 curve <- dnbinom(1:(max(cr$Crossy+10)),size = coef(nb)[1], mu = coef(nb)[2])
 
 hist(cr$Crossy, breaks = "FD", xlim = c(0,max(cr$Crossy)+10), 
@@ -62,11 +53,13 @@ legend("topright", legend = c(paste("nbinom(",round(coef(nb)[1]),", ",
 
 <img src="crossyroad_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
+## Negative Binomial Regression
 We can see if the time variable has an influence on our scores using a negative binomial
-regression. In other words, we can test the hypothesis that we get better at the game over time.
+regression. This type of regression assumes that the errors are distributed according to a negative binomial distribution. In this way, we can test the hypothesis that we get better at the game over time.
 
 
 ```r
+par(family="serif")
 fit <- glm.nb(Crossy~Time, cr)
 summary(fit)
 ```
@@ -111,12 +104,12 @@ abline(exp(coef(fit)), col = "blue")
 
 <img src="crossyroad_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
-You can draw your own conclusions from this. Thanks for reading!
+I'll leave drawing any conclusions up to you :)
 
-Questions that remained:
+Questions that remained for me, maybe you can generate some ideas:
 
 1. Does the shape parameter change with different amounts of players?
 
 2. How can we incorporate the dependence between consecutive trials? (NB assumes i.i.d. Bernoulli trials)
 
-3. In Crossy Road you both have to die within a short distance. Can this be in the model?
+3. In Crossy Road you both have to die within a short distance of each other. Can this modelled?
