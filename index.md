@@ -17,7 +17,7 @@
 </center>
 <hr/>
 
-<div class="container">
+
 
 [## [vovk-sellke maximum *p*-ratio](posts/vs-mpr.html)]: #
 
@@ -42,7 +42,7 @@
 ## [crossy road](posts/crossyroad.html)
 #### Learning about the negative binomial distribution using a fun dataset
 
-</div>
+
 
 <br/>
 
@@ -50,7 +50,7 @@
 <h1><center> <span style="color:#00008B">About</span> </center></h1>
 
 <hr/>
-<div class="container">
+
 I am a graduate student at Utrecht University, finishing my MSc in Methodology and Statistics. You can get more information about me at my [linkedin](https://www.linkedin.com/in/erikjanvankesteren) and my [github](https://github.com/vankesteren/) accounts. If you want to get in contact, you can use my <script type="text/javascript">
 //<![CDATA[
 <!--
@@ -80,4 +80,3 @@ Here are some links to statistics-related things I enjoy:
 - [Jeff Rouder](http://jeffrouder.blogspot.com)
 - [A Compendium of Clean Graphs](http://shinyapps.org/apps/RGraphCompendium/index.php).
 
-</div>
