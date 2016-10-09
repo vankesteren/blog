@@ -19,7 +19,7 @@ I stumbled upon whitening through my thesis research. In my thesis, I am looking
 
 ## Gene selection
 Let's take an example of classifying a piece of tissue in two categories using its high-dimensional genomic data: <span style="color:#006400">green</span> and <span style="color:#00008B">blue</span>.
-The most simple filter method for feature selection is as follows: Select the genes with the highest *differential expression*, that is $\text{max}\{\text{abs}(\hat{\mu}_{green}-\hat{\mu}_{blue})\}$. The intuition behind this is simple: genes that vary a lot across groups are very "predictive" of the class which their objects of study come from. For example, take the two hypothetical genes with expression levels below:
+The most simple filter method for feature selection is as follows: Select the genes with the highest *differential expression*, that is $\text{max}\{\text{abs}(\mu_{green}-\mu_{blue})\}$. The intuition behind this is simple: genes that vary a lot across groups are very "predictive" of the class which their objects of study come from. For example, take the two hypothetical genes with expression levels below:
 
 
 
@@ -71,16 +71,16 @@ The gene with the small differential expression has more overlap between classes
 
 ## Correcting for variance
 There is a problem with this approach, gene expression variance might differ. Not taking this into account might mean that you consider a gene with high mean difference and even higher variance to be more important than a gene with moderate mean difference but a low variance. Luckily, this problem has been solved ages ago, by using the following quantity instead of the simple mean difference:
-$$ \frac{\hat{\mu}_{green}-\hat{\mu}_{blue}}{\hat{\sigma}} \cdot c $$, where
+$$ \frac{\mu_{green}-\mu_{blue}}{\sigma} \cdot c $$, where
 $c = \left( \frac{1}{n_{green}} + \frac{1}{n_{blue}} \right)^{-1/2}$
 
 Yes, this is a *t-score*. As can be seen from the equation, we are correcting for the variance in the original data. We can do this for many genes $(a, b, ...)$ at once, if we collect the variance of each gene expression in a diagonal matrix and the group means in vectors like so:
 
-$$\mathbf{V} = \begin{bmatrix}\hat{\sigma}_{a} & 0 \\ 0 & \hat{\sigma}_{b}\end{bmatrix}, \quad \mathbf{\mu}_{green} = \begin{bmatrix} \hat{\mu}^{a}_{green} \\ \hat{\mu}^{b}_{green} \end{bmatrix}, \quad \mathbf{\mu}_{blue} = \begin{bmatrix} \hat{\mu}^{a}_{blue} \\ \hat{\mu}^{b}_{blue} \end{bmatrix}$$
+$$\mathbf{V} = \begin{bmatrix}\sigma_{a} & 0 \\ 0 & \sigma_{b}\end{bmatrix}, \quad \vec{\mu}_{green} = \begin{bmatrix} \mu^{a}_{green} \\ \mu^{b}_{green} \end{bmatrix}, \quad \vec{\mu}_{blue} = \begin{bmatrix} \mu^{a}_{blue} \\ \mu^{b}_{blue} \end{bmatrix}$$
 
 Then we could write the t-score equation as follows^[Isn't linear algebra great?]:
 
-$$t = c \cdot \mathbf{V}^{-1/2}(\mathbf{\mu}_{green}-\mathbf{\mu}_{blue})$$
+$$t = c \cdot \mathbf{V}^{-1/2}(\vec{\mu}_{green}-\vec{\mu}_{blue})$$
 
 Using this score is the same as performing a differential expression score analysis on *standardised* data. In standardisation, for each gene expression vector you would subtract the mean and divide by the standard deviation. The resulting vector has a standard deviation of 1 and a mean of 0.
 
