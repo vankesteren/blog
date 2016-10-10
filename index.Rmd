@@ -3,6 +3,7 @@ output:
   html_document:
     keep_md: yes
     theme: journal
+    self_contained: no
     includes:
       in_header: header.html
     pandoc_args: [
