@@ -153,14 +153,14 @@ plot(data.frame(df), xlab = "Gene a", ylab = "Gene b", main = "Raw data",
 # Extract variance diagonal matrix and standardise data
 V <- diag(diag(sigma))
 dfstd <- data.frame(t(solve(sqrt(V))%*%t(df)))
-plot(dfstd, xlab = "Gene a", ylab = "Gene b", main = "Standardised data",
+plot(dfstd, xlab = "Gene a'", ylab = "Gene b'", main = "Standardised data",
      pch=19, col = "#1E90FF88", cex.lab=2, cex.main=2, cex.axis=1.5)
 
 # Perform ZCA-cor whitening (see paper) to decorrelate data
 P <- solve(sqrt(V))%*%sigma%*%solve(sqrt(V))
 W <- solve(sqrtm(P))%*%solve(sqrtm(V))
 dfwhite <- data.frame(t(W%*%t(df)))
-plot(dfwhite, xlab = "Gene a", ylab = "Gene b", main = "Whitened data",
+plot(dfwhite, xlab = "Gene a''", ylab = "Gene b''", main = "Whitened data",
      pch=19, col = "#1E90FF88", cex.lab=2, cex.main=2, cex.axis=1.5)
 ```
 
@@ -190,7 +190,7 @@ W <- solve(sqrtm(P))%*%solve(sqrtm(V))
 dfwhite <- data.frame(t(W%*%t(as.matrix(df[,1:2]))),
                       colour=rep(c("#32CD3255", "#1E90FF55"), each=1000), 
                       stringsAsFactors=F)
-with(dfwhite, plot(X1, X2, xlab = "Gene a", ylab = "Gene b", xlim=c(-4.5,4.5), 
+with(dfwhite, plot(X1, X2, xlab = "Gene a'", ylab = "Gene b'", xlim=c(-4.5,4.5), 
                    ylim=c(-4.5,4.5), main = "Whitened data", pch=19, col = colour, 
                    cex.lab=2, cex.main=2, cex.axis=1.5))
 
@@ -202,7 +202,7 @@ polygon(density(df$X2[1:1000]), col = "#1E90FF88", border = "#006400")
 
 
 # plot marginal gene A Whitened Data
-plot(NA, ylim=c(0,0.42), xlim=c(-4.5,4.5), xlab = "Gene a", ylab = "Density", 
+plot(NA, ylim=c(0,0.42), xlim=c(-4.5,4.5), xlab = "Gene a'", ylab = "Density", 
      main = "Whitened data", cex.lab=2, cex.main=2, cex.axis=1.5)
 polygon(density(dfwhite$X2[1001:2000]), col = "#32CD3288", border = "#00008B")
 polygon(density(dfwhite$X2[1:1000]), col = "#1E90FF88", border = "#006400")
@@ -210,7 +210,7 @@ polygon(density(dfwhite$X2[1:1000]), col = "#1E90FF88", border = "#006400")
 
 <img src="whitening_files/figure-html/whitening2class-1.png" style="display: block; margin: auto;" />
 
-As can be seen from the plots, the whitened data shows a stronger differentiation between the classes in univariate space: the overlapping area in the marginal distribution is relatively low when compared to that of the raw data. **Taking into account the correlation it has, Gene a thus has more information about the classes than we would assume based on its differential expression or its _t_-score**
+As can be seen from the plots, the whitened data shows a stronger differentiation between the classes in univariate space: the overlapping area in the marginal distribution is relatively low when compared to that of the raw data. **Taking into account the correlation it has, Gene a thus has more information about the classes than we would assume based on its differential expression or its _t_-score**.
 
 
 ## cat score
