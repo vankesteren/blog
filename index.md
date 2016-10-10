@@ -16,6 +16,9 @@
 </center>
 <hr/>
 
+[## [analysis of no variance](posts/anovanovar.html)]: #
+
+[#### Simulation of a common problem in biological experiments]: #
 
 
 [## [vovk-sellke maximum *p*-ratio](posts/vs-mpr.html)]: #
