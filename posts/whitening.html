@@ -295,17 +295,17 @@ with(dfwhite, plot(X1, X2, xlab = &quot;Gene a&#39;&quot;, ylab = &quot;Gene b&#
                    cex.lab=2, cex.main=2, cex.axis=1.5))
 
 # plot marginal gene A Raw Data
-plot(NA, ylim=c(0,0.42), xlim=c(-6,6), xlab = &quot;Gene a&quot;, ylab = &quot;Density&quot;, main = &quot;Raw data&quot;,
+plot(NA, ylim=c(0,0.45), xlim=c(-6,6), xlab = &quot;Gene a&quot;, ylab = &quot;Density&quot;, main = &quot;Raw data&quot;,
      cex.lab=2, cex.main=2, cex.axis=1.5)
-polygon(density(df$X1[1001:2000]), col = &quot;#32CD3288&quot;, border = &quot;#00008B&quot;)
-polygon(density(df$X1[1:1000]), col = &quot;#1E90FF88&quot;, border = &quot;#006400&quot;)
+polygon(density(df$X1[1001:2000]), col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+polygon(density(df$X1[1:1000]), col = &quot;#32CD3288&quot;, border = &quot;#006400&quot;)
 
 
 # plot marginal gene A Whitened Data
-plot(NA, ylim=c(0,0.42), xlim=c(-4.5,4.5), xlab = &quot;Gene a&#39;&quot;, ylab = &quot;Density&quot;, 
+plot(NA, ylim=c(0,0.45), xlim=c(-4.5,4.5), xlab = &quot;Gene a&#39;&quot;, ylab = &quot;Density&quot;, 
      main = &quot;Whitened data&quot;, cex.lab=2, cex.main=2, cex.axis=1.5)
-polygon(density(dfwhite$X1[1001:2000]), col = &quot;#32CD3288&quot;, border = &quot;#006400&quot;)
-polygon(density(dfwhite$X1[1:1000]), col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)</code></pre>
+polygon(density(dfwhite$X1[1001:2000]), col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+polygon(density(dfwhite$X1[1:1000]), col = &quot;#32CD3288&quot;, border = &quot;#006400&quot;)</code></pre>
 <p><img src="whitening_files/figure-html/whitening2class-1.png" style="display: block; margin: auto;" /></p>
 <p>As can be seen from the plots, the whitened data shows a stronger differentiation between the classes in univariate space: the overlapping area in the marginal distribution is relatively low when compared to that of the raw data. <strong>Taking into account the correlation it has, Gene a thus has more information about the classes than we would assume based on its differential expression or its <em>t</em>-score</strong>.</p>
 </div>
