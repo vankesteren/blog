@@ -38,7 +38,15 @@ So I decided to also implement several bivariate distributions into the applicat
 
 ## OK, OK, you've convinced me, where can I find it!?
 
-Just go to my [shinyapps.io](https://erikjan.shinyapps.io/Densy/) account to see the app in action. If it doesn't work, that's because my free account gets only limited server time. You'll either have to wait until next month or you can run the app locally in `R` by downloading the files from the [github repository](https://github.com/vankesteren/Densy-Develop). 
+Just go to my [shinyapps.io](https://erikjan.shinyapps.io/Densy/) account to see the app in action. If it doesn't work, that's because my free account gets only limited server time. You'll have to wait until next month. However, the best way to run `Densy` is if you have `RStudio` or `R` with the `shiny` package. You can simply run the app by typing in the following commands:
+```
+install.packages("devtools")
+devtools::install_version("plotly", version = "3.6.0", repos = "http://cran.us.r-project.org")
+shiny::runGitHub("Densy-Develop", "vankesteren")
+```
+Click "open in browser" at the top for the best experience. How cool!
+
+
 
 
 ###[Back to index](../index.html)

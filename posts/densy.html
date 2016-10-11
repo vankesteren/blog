@@ -178,7 +178,11 @@ $(document).ready(function () {
 </div>
 <div id="ok-ok-youve-convinced-me-where-can-i-find-it" class="section level2">
 <h2>OK, OK, you’ve convinced me, where can I find it!?</h2>
-<p>Just go to my <a href="https://erikjan.shinyapps.io/Densy/">shinyapps.io</a> account to see the app in action. If it doesn’t work, that’s because my free account gets only limited server time. You’ll either have to wait until next month or you can run the app locally in <code>R</code> by downloading the files from the <a href="https://github.com/vankesteren/Densy-Develop">github repository</a>.</p>
+<p>Just go to my <a href="https://erikjan.shinyapps.io/Densy/">shinyapps.io</a> account to see the app in action. If it doesn’t work, that’s because my free account gets only limited server time. You’ll have to wait until next month. However, the best way to run <code>Densy</code> is if you have <code>RStudio</code> or <code>R</code> with the <code>shiny</code> package. You can simply run the app by typing in the following commands:</p>
+<pre><code>install.packages(&quot;devtools&quot;)
+devtools::install_version(&quot;plotly&quot;, version = &quot;3.6.0&quot;, repos = &quot;http://cran.us.r-project.org&quot;)
+shiny::runGitHub(&quot;Densy-Develop&quot;, &quot;vankesteren&quot;)</code></pre>
+<p>Click “open in browser” at the top for the best experience. How cool!</p>
 <div id="back-to-index-1" class="section level3">
 <h3><a href="../index.html">Back to index</a></h3>
 </div>
