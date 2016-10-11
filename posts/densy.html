@@ -151,7 +151,7 @@ $(document).ready(function () {
 <div id="the-problem" class="section level2">
 <h2>The problem</h2>
 <p>Last semester I learnt about probability distributions and density functions. These are the bread and butter of statistics: a concept that comes back over and over again in pretty much all (parametric) statistical procedures. But one thing frustrated me: it is very hard to imagine what a probability distribution is when this is all you see:</p>
-<p><span class="math display">\[f(x | \mu,\sigma^2) = \frac{1}{\sqrt{2 \sigma^2 \pi}} \cdot e^-{\frac{(x-\mu)^2}{2\sigma^2}}\]</span></p>
+<p><span class="math display">\[f(x | \mu,\sigma^2) = \frac{1}{\sqrt{2 \sigma^2 \pi}} \cdot e^{-\frac{(x-\mu)^2}{2\sigma^2}}\]</span></p>
 <p>This is the density function of the normal distribution: the familiar bell curve with on the <span class="math inline">\(x\)</span>-axis any real value, and on the <span class="math inline">\(y\)</span>-axis the probability density, or likelihood. But this is not all there is to it. The left side of the equation shows that the probability of <span class="math inline">\(x\)</span> depends on two <em>parameters</em>: <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span>. These are the mean and variance of the distribution. My question was: for all those distribution functions commonly used in the statistical literature, what happens to the shape when we change their parameters?</p>
 </div>
 <div id="the-solution" class="section level2">
@@ -170,7 +170,7 @@ $(document).ready(function () {
 </div>
 <div id="the-result-on-fire" class="section level2">
 <h2>The result on fire</h2>
-<p>Around this time, I also found the plotting library <a href="https://plot.ly/">plotly</a>, which can make fantastic interactive 3d graphs like the one below. Go on, mouse over it &amp; drag the image around! (if you’re on mobile, I’m terribly sorry for the hassle haha).</p>
+<p>Around this time, I also found the plotting library <a href="https://plot.ly/">plotly</a>, which can make fantastic interactive 3d graphs like the one below. Go on, mouse over it &amp; drag the image around! (if you’re on mobile, I’m terribly sorry but this does not work for you haha).</p>
 <iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~erikjan/3.embed?share_key=HPMG48qGQizPJ0gw0wWxc9">
 </iframe>
 <p><br /></p>
@@ -178,7 +178,7 @@ $(document).ready(function () {
 </div>
 <div id="ok-ok-youve-convinced-me-where-can-i-find-it" class="section level2">
 <h2>OK, OK, you’ve convinced me, where can I find it!?</h2>
-<p>Just go to my <a href="https://erikjan.shinyapps.io/Densy/">shinyapps.io</a> account to see the app in action. If it doesn’t work, that’s because the free accounts get limited server time. You’ll either have to wait until next month or you can run the app yourself in <code>R</code> by downloading it from the <a href="https://github.com/vankesteren/Densy-Develop">github repository</a>.</p>
+<p>Just go to my <a href="https://erikjan.shinyapps.io/Densy/">shinyapps.io</a> account to see the app in action. If it doesn’t work, that’s because my free account gets only limited server time. You’ll either have to wait until next month or you can run the app locally in <code>R</code> by downloading the files from the <a href="https://github.com/vankesteren/Densy-Develop">github repository</a>.</p>
 <div id="back-to-index-1" class="section level3">
 <h3><a href="../index.html">Back to index</a></h3>
 </div>
