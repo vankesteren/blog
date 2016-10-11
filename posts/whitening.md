@@ -197,15 +197,15 @@ with(dfwhite, plot(X1, X2, xlab = "Gene a'", ylab = "Gene b'", xlim=c(-4.5,4.5),
 # plot marginal gene A Raw Data
 plot(NA, ylim=c(0,0.42), xlim=c(-6,6), xlab = "Gene a", ylab = "Density", main = "Raw data",
      cex.lab=2, cex.main=2, cex.axis=1.5)
-polygon(density(df$X2[1001:2000]), col = "#32CD3288", border = "#00008B")
-polygon(density(df$X2[1:1000]), col = "#1E90FF88", border = "#006400")
+polygon(density(df$X1[1001:2000]), col = "#32CD3288", border = "#00008B")
+polygon(density(df$X1[1:1000]), col = "#1E90FF88", border = "#006400")
 
 
 # plot marginal gene A Whitened Data
 plot(NA, ylim=c(0,0.42), xlim=c(-4.5,4.5), xlab = "Gene a'", ylab = "Density", 
      main = "Whitened data", cex.lab=2, cex.main=2, cex.axis=1.5)
-polygon(density(dfwhite$X2[1001:2000]), col = "#32CD3288", border = "#00008B")
-polygon(density(dfwhite$X2[1:1000]), col = "#1E90FF88", border = "#006400")
+polygon(density(dfwhite$X1[1001:2000]), col = "#32CD3288", border = "#006400")
+polygon(density(dfwhite$X1[1:1000]), col = "#1E90FF88", border = "#00008B")
 ```
 
 <img src="whitening_files/figure-html/whitening2class-1.png" style="display: block; margin: auto;" />
