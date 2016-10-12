@@ -4,10 +4,11 @@ author: "Erik-Jan van Kesteren"
 output:
   html_document:
     code_folding: hide
-    keep_md: yes
-    theme: journal
     includes:
       in_header: postheader.html
+    keep_md: yes
+    self_contained: no
+    theme: journal
 ---
 
 ```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}

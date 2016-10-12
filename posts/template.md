@@ -5,8 +5,12 @@ Erik-Jan van Kesteren
 
 ###[Back to index](../index.html)
 
+
+
 ## Introduction
-Here is the intro and where I got the inspiration
+Here is the intro and where I got the inspiration. It leads to this svg in the img folder of the root directory:
+
+<img src="../img/Isometric-blim.svg" width="40%" style="display:block; margin-left:auto; margin-right:auto">
 
 ## The post
 Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).
