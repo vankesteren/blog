@@ -10,7 +10,7 @@ Erik-Jan van Kesteren
 ## Introduction
 Here is the intro and where I got the inspiration. It leads to this svg in the img folder of the root directory:
 
-<img src="../img/Isometric-blim.svg" width="40%" style="display:block; margin-left:auto; margin-right:auto">
+<img src="template_files/Isometric-blim.svg" width="40%" style="display:block; margin-left:auto; margin-right:auto"></img>
 
 ## The post
 Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).
