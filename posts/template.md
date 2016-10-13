@@ -15,6 +15,8 @@ Here is the intro and where I got the inspiration. It leads to this svg in the i
 ## The post
 Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).
 
+hallo bruno
+
 ```r
 plot(rnorm(1000))
 ```
