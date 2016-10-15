@@ -1,0 +1,11 @@
+Why do we need truly random numbers
+
+Introduction = how to get random numbers from a deterministic machine
+
+The mersenne-twister algorithm
+
+So everything depends on the inputs: Alternatives: Random.org atmospheric radiation
+
+How to test for randomness: compression algorithms (related to entropy)
+
+Test random.org against runif
