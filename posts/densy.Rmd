@@ -19,15 +19,15 @@ knitr::opts_chunk$set(dev = 'svg')
 ###[Back to index](../index.html)
 
 ## The problem
-Last semester I learnt about probability distributions and density functions. These are the bread and butter of statistics: a concept that comes back over and over again in pretty much all (parametric) statistical procedures. But one thing frustrated me: it is very hard to imagine what a probability distribution is when this is all you see:
+Last semester I learnt about probability density functions (PDFs). These are the bread and butter of statistics: a concept that comes back over and over again in pretty much every (parametric) statistical procedure. But one thing frustrated me: it is very hard to imagine what a PDF is when this is all you see:
 
 $$f(x | \mu,\sigma^2) = \frac{1}{\sqrt{2 \sigma^2 \pi}} \cdot e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
 
 
-This is the density function of the normal distribution: the familiar bell curve with on the $x$-axis any real value, and on the $y$-axis the probability density, or likelihood. But this is not all there is to it. The left side of the equation shows that the probability of $x$ depends on two *parameters*: $\mu$ and $\sigma^2$. These are the mean and variance of the distribution. My question was: for all those distribution functions commonly used in the statistical literature, what happens to the shape when we change their parameters?
+This is the normal distribution: the familiar bell curve with on the $x$-axis any real value, and on the $y$-axis the probability density. The left side of the equation shows that the probability density of $x$ depends on two *parameters*: $\mu$ and $\sigma^2$. These are the mean and variance of the distribution. My question was: for all those distribution functions commonly used in the statistical literature, what happens to the shape when we change their parameters?
 
 ## The solution
-I could already make plots in `R`, but in order to see the changes as they happen, it was obvious to me that I needed some form of application that dynamically updates the graph as parameters are changed. Then I found [shiny](http://shiny.rstudio.com/), a framework by the makers of [RStudio](https://www.rstudio.com/). Shiny makes it ridiculously easy to create interactive dashboards and applications that input variables to `R` and output visually pleasing graphs, tables, and anything else you can squeeze out of it. So I started programming.
+I could already make plots in `R`, but in order to see the changes as they happen, it was obvious to me that I needed some form of application that dynamically updates the graph as parameters are changed. Then I found [shiny](http://shiny.rstudio.com/), a framework by the makers of [RStudio](https://www.rstudio.com/). Shiny makes it ridiculously easy to create interactive dashboards and applications that input variables to `R` and output visually pleasing graphs, tables, and anything else you can squeeze out of it. So I started programming different probability density functions and their associated parameters into this framework.
 
 ## The result
 
@@ -47,7 +47,7 @@ Around this time, I also found the plotting library [plotly](https://plot.ly/), 
 
 <br/>
 
-So I decided to also implement several bivariate distributions into the application. These are even more fun to play around with, do give it a try!
+So I decided to also implement several bivariate distributions into the application. Bivariate distributions need three-dimensional graphs because they have a density value (z-axis) on two variables (x and y axes). Because they are 3d, these distribution functions are even more fun to play around with, so do give it a try!
 
 ## OK, OK, you've convinced me, where can I find it!?
 

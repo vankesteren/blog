@@ -31,9 +31,14 @@
 [### Bayesian linear models made easy and fast]: #
 
 
-[## [densy](posts/densy.html)]: #
+[## [random number generators](posts/rng.html)]: #
 
-[#### An app to visualise different probability distributions]: #
+[### How a deterministic machine generates random values]: #
+
+
+## [densy](posts/densy.html)
+
+#### An app to visualise different probability distributions
 
 
 ## [whitening](posts/whitening.html)

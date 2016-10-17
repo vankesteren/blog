@@ -1,11 +1,17 @@
 Why do we need truly random numbers
 
 Introduction = how to get random numbers from a deterministic machine
+Chaotic system: minimum change to inputs leads to vastly changed outputs
+https://upload.wikimedia.org/wikipedia/commons/4/45/Double-compound-pendulum.gif
+
 
 The mersenne-twister algorithm
 
 So everything depends on the inputs: Alternatives: Random.org atmospheric radiation
+lavarand: picture of lava lamp to generate random numbers: the idea is that lava-lamp is a chaotic system.
 
 How to test for randomness: compression algorithms (related to entropy)
+Only partial test, but intuitive
 
 Test random.org against runif
+
