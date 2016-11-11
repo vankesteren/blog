@@ -30,7 +30,7 @@ In the left-hand panel, you can easily change the parameters $\mu$ and $\sigma$,
 
 Around this time, I also found the plotting library [plotly](https://plot.ly/), which can make fantastic interactive 3d graphs like the one below. Go on, mouse over it & drag the image around! (if you're on mobile, I'm terribly sorry but this does not work for you haha).
 
-<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~erikjan/3.embed?share_key=HPMG48qGQizPJ0gw0wWxc9"></iframe>
+<iframe width="100%" height="400" frameborder="0" scrolling="no" src="https://plot.ly/~erikjan/13.embed"></iframe>
 
 <br/>
 
