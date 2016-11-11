@@ -1,6 +1,7 @@
 ---
 output:
   html_document:
+    mathjax: null
     keep_md: yes
     theme: journal
     self_contained: no
