@@ -79,6 +79,7 @@ Here are some links to statistics-related things I enjoy:
 [JASP](https://jasp-stats.org),
 [Young Statisticians Netherlands](http://youngstatisticians.nl),
 [Explained Visually](http://setosa.io/ev/),
+[Brilliantly Wrong](https://arogozhnikov.github.io/),
 [The Etz-Files](https://alexanderetz.com/),
 [Richard Morey](https://richarddmorey.org/),
 [r/dataisbeautiful](https://www.reddit.com/r/dataisbeautiful/),
