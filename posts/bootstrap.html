@@ -154,20 +154,59 @@ $(document).ready(function () {
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>Here is the intro and where I got the inspiration. It leads to this svg in the img folder of the root directory:</p>
-<p><img src="template_files/Isometric-blim.svg" width="40%" style="display:block; margin-left:auto; margin-right:auto"></img></p>
+<p>The word “bootstrap” comes from an old story about a hero - Baron Munchausen - who is riding around on his horse in a forest and suddenly gets stuck in a swamp. He screams for help but there is no one around who hears his voice! Luckily our hero does not give up and gets a great idea: “what if I just pull myself out of this swamp?”. He grabs the <em>straps</em> of his <em>boots</em> and pulls himself loose. Fantastic - he just invented bootstrapping.</p>
+<img src="bootstrap_files/munchausen.svg" width="40%" style="display:block; margin-left:auto; margin-right:auto"></img>
+<center>
+<em>Baron Munchausen ponytailing out of another swamp.</em><a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>
+</center>
+<p><br/></p>
+<p>Physics-defying stories aside, bootstrapping has become a common term for something seemingly impossible or counterintuitive. In this blogpost I will try to generate an intuition for the properties of <em>statistical bootstrapping</em> - resampling from your data to approximate resampling from a population.</p>
 </div>
-<div id="the-post" class="section level2">
-<h2>The post</h2>
-<p>Here is a png dev image, for if there are a lot of points in the image (svg becomes slow in this case).</p>
-<pre class="r"><code>plot(rnorm(1000))</code></pre>
-<p><img src="bootstrap_files/figure-html/png-1.png" /><!-- --></p>
-<p>With few points, it’s better to use the standard svg.</p>
-<pre class="r"><code>barplot(c(2, 4, 6, 5, 1), col = &quot;#00008B&quot;, border = &quot;#00008B&quot;)</code></pre>
-<p><img src="bootstrap_files/figure-html/svg-1.svg" /><!-- --></p>
+<div id="the-population" class="section level2">
+<h2>The population</h2>
+<p>In order to explain bootstrapping, we need to generate an example. Let’s assume we want to know the average height of all the people in the Netherlands. With the power of <code>R</code> we can easily generate a population of 17104879 people (according to CBS, the amount of registered inhabitants of the Netherlands as per the creation of this post<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>). The Dutch are just about the tallest people on the planet, where the men are 180,7 centimeters tall, on average<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>.</p>
+<p>Here is some more information about my population. For the sake of simplicity let’s assume that all inhabitants are actually men (which would be a disaster). The tallest Dutch man is 223 centimeters<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> (which is very tall) and the shortest Dutch man is ridiculously hard to find on the internet. I have an intuition that it is further away from the mean of 180.7, which implies some negative skewness, but that’s not what this post is about so let’s also assume we have a non-skewed normal distribution.</p>
+<p>After some fiddling with the standard deviation variable, I simulated the following population:</p>
+<pre class="r"><code># generate population data
+set.seed(3665364)
+pop &lt;- rnorm(17104879, mean = 180.7, sd = 7.5)
+
+# plot the distribution
+hist(pop, freq = FALSE, ylim = c(0, 0.06), xlim = c(120, 240), axes = FALSE, 
+    breaks = 30, xlab = &quot;&quot;, ylab = &quot;&quot;, main = &quot;&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+polygon(density(pop, from = 130, to = 230), cex = 2, col = &quot;#1E90FF44&quot;, border = &quot;#00008B&quot;, 
+    lwd = 2)
+abline(v = 180.7, col = &quot;white&quot;, lwd = 2)
+axis(1, at = c(130, 155, 180, 205, 230))
+mtext(&quot;Population height distribution&quot;, side = 3, line = 1, cex = 1.8)
+mtext(&quot;N = 17104879&quot;, side = 2, line = 0)
+mtext(&quot;Height in cm&quot;, side = 1, line = 3)</code></pre>
+<p><img src="bootstrap_files/figure-html/popsvg-1.svg" style="display: block; margin: auto;" /></p>
+<p>Let’s look how tall the tallest man from the hypothetical all-men Netherlands is, along with some other statistics!</p>
+<pre class="r"><code>cat(&quot; Statistics about the population:\n&quot;, &quot;--------------------------------\n&quot;, 
+    &quot;The shortest person is &quot;, min(pop), &quot; cm tall.\n&quot;, &quot;Mean height is &quot;, mean(pop), 
+    &quot; cm.\n&quot;, &quot;Median height is &quot;, median(pop), &quot; cm.\n&quot;, &quot;The 5th and 95th percentiles are &quot;, 
+    quantile(pop, probs = c(0.05, 0.95)), &quot;cm.\n&quot;, &quot;The tallest person is &quot;, 
+    max(pop), &quot; cm tall.&quot;)</code></pre>
+<pre><code>##  Statistics about the population:
+##  --------------------------------
+##  The shortest person is  142.0121  cm tall.
+##  Mean height is  180.6979  cm.
+##  Median height is  180.698  cm.
+##  The 5th and 95th percentiles are  168.3612 193.0287 cm.
+##  The tallest person is  222.2139  cm tall.</code></pre>
 <div id="back-to-index-1" class="section level3">
 <h3><a href="../index.html">Back to index</a></h3>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Source: <a href="http://en.citizendium.org/wiki/Image:Dore-Munchausen-pull.jpg" class="uri">http://en.citizendium.org/wiki/Image:Dore-Munchausen-pull.jpg</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Source: <a href="https://www.cbs.nl/nl-nl/visualisaties/bevolkingsteller" class="uri">https://www.cbs.nl/nl-nl/visualisaties/bevolkingsteller</a> as per the writing of this post.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>Source: <a href="http://statline.cbs.nl/Statweb/publication/?DM=SLNL&amp;PA=81565ned&amp;D1=5&amp;D2=1&amp;D3=0&amp;D4=a&amp;D5=34&amp;HDR=T,G3&amp;STB=G1,G2,G4&amp;VW=T" class="uri">http://statline.cbs.nl/Statweb/publication/?DM=SLNL&amp;PA=81565ned&amp;D1=5&amp;D2=1&amp;D3=0&amp;D4=a&amp;D5=34&amp;HDR=T,G3&amp;STB=G1,G2,G4&amp;VW=T</a><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>Quick google searchy source: <a href="https://www.langzijn.nl/tag/langste-man-nederland" class="uri">https://www.langzijn.nl/tag/langste-man-nederland</a><a href="#fnref4">↩</a></p></li>
+</ol>
 </div>
 
 
