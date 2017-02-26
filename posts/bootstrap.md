@@ -30,7 +30,7 @@ After some fiddling with the standard deviation variable, I simulated the follow
 
 [^cbs]: Source: https://www.cbs.nl/nl-nl/visualisaties/bevolkingsteller as per the writing of this post.
 
-[^statline]: Source: http://statline.cbs.nl/Statweb/publication/?DM=SLNL&PA=81565ned&D1=5&D2=1&D3=0&D4=a&D5=34&HDR=T,G3&STB=G1,G2,G4&VW=T
+[^statline]: Source: https://is.gd/cbsdata
 
 [^lngst]: Quick google searchy source: https://www.langzijn.nl/tag/langste-man-nederland
 
