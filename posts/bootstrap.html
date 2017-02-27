@@ -195,6 +195,119 @@ mtext(&quot;Height in cm&quot;, side = 1, line = 3)</code></pre>
 ##  Median height is  180.698  cm.
 ##  The 5th and 95th percentiles are  168.3612 193.0287 cm.
 ##  The tallest person is  222.2139  cm tall.</code></pre>
+<p>That seems close enough to something I’d consider a population.</p>
+</div>
+<div id="the-set-up" class="section level2">
+<h2>The set-up</h2>
+<p>Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a <em>representative sample</em> of persons from this population that we <em>can</em> measure. The size of our sample (<span class="math inline">\(N\)</span>) should depend on how precise we want our final estimate to be - the <em>standard error</em> of a statistic depends directly number of persons in our sample. For the mean, the standard error is usually calculated as follows:</p>
+<p><span class="math display">\[ se_\bar{x} = \frac{\hat{\sigma}}{\sqrt{N}}\text{, where } \hat{\sigma} = \sqrt{\frac{1}{N-1}\sum_{i=1}^N(x_i-\bar{x})^2} \]</span></p>
+<p>With increasing <span class="math inline">\(N\)</span>, the <span class="math inline">\(\hat{\sigma}\)</span> becomes smaller, and the <span class="math inline">\(se_\bar{x}\)</span> becomes smaller as well. In words: with a larger sample comes an increase in precision (a reduction in error).</p>
+<p>We can display the precision in the form of <em>confidence intervals</em> (CI). A <span class="math inline">\(p\%\)</span> CI about an estimate indicates the area in which upon infinitely repeated sampling the TRUE parameter lies <span class="math inline">\(p\%\)</span> of the time. In other words, if we would redo our experiment infinite amount of times, a 95% confidence interval will <em>cover</em> the true parameter in 95% of the replications.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a></p>
+<p>In real life, there is of course no such thing as infinite resampling; we only sample once and use the CI as an indication of precision. Let’s look at how the precision of the mean estimate increases as we take larger samples from the above population.</p>
+<pre class="r"><code># randomly sample from population
+small &lt;- sample(pop, 20)
+medium &lt;- sample(pop, 100)
+large &lt;- sample(pop, 1000)
+
+# calculate means
+means &lt;- mean(small)
+meanm &lt;- mean(medium)
+meanl &lt;- mean(large)
+
+# calculate standard errors
+ses &lt;- sd(small)/sqrt(length(small))
+sem &lt;- sd(medium)/sqrt(length(medium))
+sel &lt;- sd(large)/sqrt(length(large))
+
+# calculate confidence intervals
+CIs &lt;- c(means - 1.96 * ses, means + 1.96 * ses)
+CIm &lt;- c(meanm - 1.96 * sem, meanm + 1.96 * sem)
+CIl &lt;- c(meanl - 1.96 * sel, meanl + 1.96 * sel)
+
+# initialise plot
+plot(0, xlim = c(170, 190), ylim = c(0, 4), bty = &quot;L&quot;, xlab = &quot;Height in cm&quot;, 
+    ylab = &quot;&quot;, axes = F, cex = 1.3, main = &quot;Effect of sampling on CI&quot;)
+axis(1, cex = 1.3)
+
+# horizontal lines
+lines(CIl, y = c(1, 1), lwd = 2)
+lines(CIm, y = c(2, 2), lwd = 2)
+lines(CIs, y = c(3, 3), lwd = 2)
+
+# points
+points(c(means, meanm, meanl), c(3, 2, 1), bg = &quot;black&quot;, pch = 24)
+
+# vertical lines
+lines(c(CIl[1], CIl[1]), c(0.9, 1.1), lwd = 2)
+lines(c(CIl[2], CIl[2]), c(0.9, 1.1), lwd = 2)
+lines(c(CIm[1], CIm[1]), c(1.9, 2.1), lwd = 2)
+lines(c(CIm[2], CIm[2]), c(1.9, 2.1), lwd = 2)
+lines(c(CIs[1], CIs[1]), c(2.9, 3.1), lwd = 2)
+lines(c(CIs[2], CIs[2]), c(2.9, 3.1), lwd = 2)
+
+# true mean
+abline(v = mean(pop), lwd = 2, lty = 3)
+
+# text
+text(y = c(1, 2, 3), x = 172, labels = c(&quot;N = 1000&quot;, &quot;N = 100&quot;, &quot;N = 20&quot;), pos = 4, 
+    cex = 1.3)</code></pre>
+<p><img src="bootstrap_files/figure-html/prec-1.svg" style="display: block; margin: auto;" /></p>
+<p>As you can see, the CI from each sample covers the true population value in this case. We can create these confidence intervals because we know the <em>sampling distribution</em> of the mean - the distribution of the mean that arises upon repeated sampling. For means of a normally distributed population, the sampling distribution is the familiar Student’s <em>t</em>-distribution. We use the probability density to determine our 95% CI (the <code>1.96</code> in the code above).</p>
+<p>But what if we don’t exactly know what the sampling distribution is? For example, what happens if we do not have a normally distributed population? It turns out there is another way of generating CIs.</p>
+</div>
+<div id="the-bootstrap" class="section level2">
+<h2>The bootstrap</h2>
+<p>The bootstrap has these steps: 1: approximate the sampling distribution by sampling with replacement from your original sample.</p>
+<p>Huh? Only one step? Is it that simple?</p>
+<p>Yes:</p>
+<pre class="r"><code># Let&#39;s bootstrap 10000 times!
+mean_sampling_distribution &lt;- numeric(10000)
+for (i in 1:10000) {
+    bootstrap_sample &lt;- sample(medium, replace = T)
+    mean_sampling_distribution[i] &lt;- mean(bootstrap_sample)
+}
+
+opt &lt;- par(mar = c(5, 1, 4, 1))
+hist(mean_sampling_distribution, freq = FALSE, xlim = c(175, 187), axes = FALSE, 
+    breaks = 30, xlab = &quot;Height in cm&quot;, ylab = &quot;&quot;, main = &quot;Bootstrap Sampling Distribution&quot;, 
+    col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+axis(1, at = c(175, 178, 181, 184, 187))</code></pre>
+<p><img src="bootstrap_files/figure-html/boot-1.svg" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(opt)</code></pre>
+<p>Great! Now we have an <em>empirical</em> sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: order sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!</p>
+<pre class="r"><code>CIbootstrap &lt;- quantile(mean_sampling_distribution, probs = c(0.025, 0.975))
+
+# plot
+plot(0, xlim = c(170, 190), ylim = c(0, 3), bty = &quot;L&quot;, xlab = &quot;Height in cm&quot;, 
+    ylab = &quot;&quot;, axes = F, cex = 1.3, main = &quot;Bootstrap CI&quot;)
+axis(1, cex = 1.3)
+
+# original CI
+lines(CIm, y = c(2, 2), lwd = 2)
+lines(c(CIm[1], CIm[1]), c(1.9, 2.1), lwd = 2)
+lines(c(CIm[2], CIm[2]), c(1.9, 2.1), lwd = 2)
+
+# bootstrap CI
+lines(CIbootstrap, y = c(1, 1), lwd = 2, col = &quot;dark green&quot;)
+lines(c(CIbootstrap[1], CIbootstrap[1]), c(0.9, 1.1), lwd = 2, col = &quot;dark green&quot;)
+lines(c(CIbootstrap[2], CIbootstrap[2]), c(0.9, 1.1), lwd = 2, col = &quot;dark green&quot;)
+
+# true mean
+abline(v = mean(pop), lwd = 2, lty = 3)
+
+# text
+text(y = c(1, 2), x = 172, labels = c(&quot;Bootstrap CI&quot;, &quot;Theoretical CI&quot;), pos = 4, 
+    cex = 1.3)
+
+# points
+points(c(meanm, meanm), c(2, 1), bg = c(&quot;black&quot;, &quot;dark green&quot;), col = c(&quot;black&quot;, 
+    &quot;dark green&quot;), pch = 24)</code></pre>
+<p><img src="bootstrap_files/figure-html/bootCI-1.svg" style="display: block; margin: auto;" /></p>
+<p>As you can see, that’s very close to the original theoretical CI! However, the advantage is that this does not have the assumption of a sampling distribution in the form of a <em>t</em>-distribution. Not unlike our friend Baron Munchausen, we have magically done away with a problem (distributional assumption) by pulling ourselves up from our bootstraps! Fantastic! Or is it?</p>
+</div>
+<div id="the-downside" class="section level2">
+<h2>The downside</h2>
+<p>There is one major point I have not yet touched upon: in our simulation we assumed that each person in our population has the same probability of being sampled - the <em>sampling probability</em>.</p>
 <div id="back-to-index-1" class="section level3">
 <h3><a href="../index.html">Back to index</a></h3>
 </div>
@@ -206,6 +319,7 @@ mtext(&quot;Height in cm&quot;, side = 1, line = 3)</code></pre>
 <li id="fn2"><p>Source: <a href="https://www.cbs.nl/nl-nl/visualisaties/bevolkingsteller" class="uri">https://www.cbs.nl/nl-nl/visualisaties/bevolkingsteller</a> as per the writing of this post.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>Source: <a href="https://is.gd/cbsdata" class="uri">https://is.gd/cbsdata</a><a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>Quick google searchy source: <a href="https://www.langzijn.nl/tag/langste-man-nederland" class="uri">https://www.langzijn.nl/tag/langste-man-nederland</a><a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>this explanation follows a frequentist framework of statistics. For an interesting sidestep and Bayesian credible intervals, do read this paper - <a href="http://doi.org/10.3758/s13423-015-0947-8" class="uri">http://doi.org/10.3758/s13423-015-0947-8</a><a href="#fnref5">↩</a></p></li>
 </ol>
 </div>
 

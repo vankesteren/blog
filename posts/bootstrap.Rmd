@@ -78,5 +78,140 @@ cat(" Statistics about the population:\n",
     "The tallest person is ", max(pop), " cm tall.")
 ```
 
+That seems close enough to something I'd consider a population.
+
+## The set-up
+Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a *representative sample* of persons from this population that we *can* measure. The size of our sample ($N$) should depend on how precise we want our final estimate to be - the *standard error* of a statistic depends directly number of persons in our sample. For the mean, the standard error is usually calculated as follows:
+
+\[ se_\bar{x} = \frac{\hat{\sigma}}{\sqrt{N}}\text{, where } \hat{\sigma} = \sqrt{\frac{1}{N-1}\sum_{i=1}^N(x_i-\bar{x})^2} \]
+
+With increasing $N$, the $\hat{\sigma}$ becomes smaller, and the $se_\bar{x}$ becomes smaller as well. In words: with a larger sample comes an increase in precision (a reduction in error).
+
+We can display the precision in the form of *confidence intervals* (CI). A $p\%$ CI about an estimate indicates the area in which upon infinitely repeated sampling the TRUE parameter lies $p\%$ of the time. In other words, if we would redo our experiment infinite amount of times, a 95% confidence interval will *cover* the true parameter in 95% of the replications.[^CI]
+
+[^CI]: this explanation follows a frequentist framework of statistics. For an interesting sidestep and Bayesian credible intervals, do read this paper -  http://doi.org/10.3758/s13423-015-0947-8
+
+In real life, there is of course no such thing as infinite resampling; we only sample once and use the CI as an indication of precision. Let's look at how the precision of the mean estimate increases as we take larger samples from the above population.
+
+```{r prec, tidy=TRUE, fig.align="center"}
+# randomly sample from population
+small <- sample(pop, 20)
+medium <- sample(pop, 100)
+large <- sample(pop, 1000)
+
+# calculate means
+means <- mean(small)
+meanm <- mean(medium)
+meanl <- mean(large)
+
+# calculate standard errors
+ses <- sd(small)/sqrt(length(small))
+sem <- sd(medium)/sqrt(length(medium))
+sel <- sd(large)/sqrt(length(large))
+
+# calculate confidence intervals
+CIs <- c(means-1.96*ses, means+1.96*ses)
+CIm <- c(meanm-1.96*sem, meanm+1.96*sem)
+CIl <- c(meanl-1.96*sel, meanl+1.96*sel)
+
+# initialise plot
+plot(0, xlim = c(170, 190), ylim = c(0, 4), bty = "L", xlab = "Height in cm",
+     ylab = "", axes = F, cex = 1.3, main = "Effect of sampling on CI")
+axis(1, cex = 1.3)
+
+# horizontal lines
+lines(CIl, y = c(1,1), lwd = 2)
+lines(CIm, y = c(2,2), lwd = 2)
+lines(CIs, y = c(3,3), lwd = 2)
+
+# points
+points(c(means, meanm, meanl), c(3,2,1), bg = "black", pch=24)
+
+# vertical lines
+lines(c(CIl[1], CIl[1]), c(0.9, 1.1), lwd = 2)
+lines(c(CIl[2], CIl[2]), c(0.9, 1.1), lwd = 2)
+lines(c(CIm[1], CIm[1]), c(1.9, 2.1), lwd = 2)
+lines(c(CIm[2], CIm[2]), c(1.9, 2.1), lwd = 2)
+lines(c(CIs[1], CIs[1]), c(2.9, 3.1), lwd = 2)
+lines(c(CIs[2], CIs[2]), c(2.9, 3.1), lwd = 2)
+
+# true mean
+abline(v = mean(pop), lwd = 2, lty = 3)
+
+# text
+text(y = c(1,2,3), x = 172, labels = c("N = 1000", "N = 100", "N = 20"), pos = 4, cex = 1.3)
+```
+
+As you can see, the CI from each sample covers the true population value in this case. We can create these confidence intervals because we know the *sampling distribution* of the mean - the distribution of the mean that arises upon repeated sampling. For means of a normally distributed population, the sampling distribution is the familiar Student's *t*-distribution. We use the probability density to determine our 95% CI (the `1.96` in the code above).
+
+But what if we don't exactly know what the sampling distribution is? For example, what happens if we do not have a normally distributed population? It turns out there is another way of generating CIs.
+
+## The bootstrap
+
+The bootstrap has these steps: 
+1: approximate the sampling distribution by sampling with replacement from your original sample.
+
+Huh? Only one step? Is it that simple?
+
+Yes:
+
+```{r boot, tidy=TRUE, fig.align="center"}
+# Let's bootstrap 10000 times!
+mean_sampling_distribution <- numeric(10000)
+for (i in 1:10000){
+  bootstrap_sample <- sample(medium, replace = T)
+  mean_sampling_distribution[i] <- mean(bootstrap_sample)
+}
+
+opt <- par(mar = c(5,1,4,1))
+hist(mean_sampling_distribution, freq = FALSE, 
+     xlim = c(175, 187), axes = FALSE, breaks = 30, xlab = "Height in cm", 
+     ylab = "", main = "Bootstrap Sampling Distribution", col = "#1E90FF88", 
+     border = "#00008B")
+axis(1, at = c(175,178,181,184,187))
+par(opt)
+
+```
+
+Great! Now we have an *empirical* sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: order sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!
+
+```{r bootCI, tidy=TRUE, fig.align="center"}
+CIbootstrap <- quantile(mean_sampling_distribution, probs = c(0.025,0.975))
+
+# plot
+plot(0, xlim = c(170, 190), ylim = c(0, 3), bty = "L", xlab = "Height in cm",
+     ylab = "", axes = F, cex = 1.3, main = "Bootstrap CI")
+axis(1, cex = 1.3)
+
+# original CI
+lines(CIm, y = c(2,2), lwd = 2)
+lines(c(CIm[1], CIm[1]), c(1.9, 2.1), lwd = 2)
+lines(c(CIm[2], CIm[2]), c(1.9, 2.1), lwd = 2)
+
+# bootstrap CI
+lines(CIbootstrap, y = c(1,1), lwd = 2, col = "dark green")
+lines(c(CIbootstrap[1], CIbootstrap[1]), c(0.9, 1.1), lwd = 2, col = "dark green")
+lines(c(CIbootstrap[2], CIbootstrap[2]), c(0.9, 1.1), lwd = 2, col = "dark green")
+
+# true mean
+abline(v = mean(pop), lwd = 2, lty = 3)
+
+# text
+text(y = c(1,2), x = 172, labels = c("Bootstrap CI", "Theoretical CI"), pos = 4, cex = 1.3)
+
+# points
+points(c(meanm, meanm), c(2,1), bg = c("black", "dark green"), 
+       col = c("black", "dark green"), pch=24)
+
+
+```
+
+As you can see, that's very close to the original theoretical CI! However, the advantage is that this does not have the assumption of a sampling distribution in the form of a *t*-distribution. Not unlike our friend Baron Munchausen, we have magically done away with a problem (distributional assumption) by pulling ourselves up from our bootstraps! Fantastic! Or is it?
+
+
+## The downside
+
+There is one major point I have not yet touched upon: in our simulation we assumed that each person in our population has the same probability of being sampled - the *sampling probability*. 
+
 
 ###[Back to index](../index.html)
