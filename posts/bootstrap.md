@@ -78,7 +78,7 @@ cat(" Statistics about the population:\n", "--------------------------------\n",
 That seems close enough to something I'd consider a population.
 
 ## The set-up
-Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a *representative sample* of persons from this population that we *can* measure. The size of our sample ($N$) should depend on how precise we want our final estimate to be - the *standard error* of a statistic depends directly number of persons in our sample. For the mean, the standard error is usually calculated as follows:
+Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a *representative sample* of persons from this population that we *can* measure. The size of our sample ($N$) should depend on how precise we want our final estimate to be - the *standard error* of a statistic depends directly on the number of persons in our sample. For the mean, the standard error is usually calculated as follows:
 
 \[ se_\bar{x} = \frac{\hat{\sigma}}{\sqrt{N}}\text{, where } \hat{\sigma} = \sqrt{\frac{1}{N-1}\sum_{i=1}^N(x_i-\bar{x})^2} \]
 
@@ -150,7 +150,8 @@ But what if we don't exactly know what the sampling distribution is? For example
 ## The bootstrap
 
 The bootstrap has these steps: 
-1: approximate the sampling distribution by sampling with replacement from your original sample.
+
+  1. approximate the sampling distribution by taking the mean of n repeated samples with replacement from your original sample.
 
 Huh? Only one step? Is it that simple?
 
@@ -178,7 +179,7 @@ axis(1, at = c(175, 178, 181, 184, 187))
 par(opt)
 ```
 
-Great! Now we have an *empirical* sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: order sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!
+Great! Now we have an *empirical* sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!
 
 
 ```r

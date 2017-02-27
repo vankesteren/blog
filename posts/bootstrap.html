@@ -199,7 +199,7 @@ mtext(&quot;Height in cm&quot;, side = 1, line = 3)</code></pre>
 </div>
 <div id="the-set-up" class="section level2">
 <h2>The set-up</h2>
-<p>Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a <em>representative sample</em> of persons from this population that we <em>can</em> measure. The size of our sample (<span class="math inline">\(N\)</span>) should depend on how precise we want our final estimate to be - the <em>standard error</em> of a statistic depends directly number of persons in our sample. For the mean, the standard error is usually calculated as follows:</p>
+<p>Normally, when we want to estimate some population parameter such as the mean height, we cannot measure all persons. Therefore, we create a <em>representative sample</em> of persons from this population that we <em>can</em> measure. The size of our sample (<span class="math inline">\(N\)</span>) should depend on how precise we want our final estimate to be - the <em>standard error</em> of a statistic depends directly on the number of persons in our sample. For the mean, the standard error is usually calculated as follows:</p>
 <p><span class="math display">\[ se_\bar{x} = \frac{\hat{\sigma}}{\sqrt{N}}\text{, where } \hat{\sigma} = \sqrt{\frac{1}{N-1}\sum_{i=1}^N(x_i-\bar{x})^2} \]</span></p>
 <p>With increasing <span class="math inline">\(N\)</span>, the <span class="math inline">\(\hat{\sigma}\)</span> becomes smaller, and the <span class="math inline">\(se_\bar{x}\)</span> becomes smaller as well. In words: with a larger sample comes an increase in precision (a reduction in error).</p>
 <p>We can display the precision in the form of <em>confidence intervals</em> (CI). A <span class="math inline">\(p\%\)</span> CI about an estimate indicates the area in which upon infinitely repeated sampling the TRUE parameter lies <span class="math inline">\(p\%\)</span> of the time. In other words, if we would redo our experiment infinite amount of times, a 95% confidence interval will <em>cover</em> the true parameter in 95% of the replications.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a></p>
@@ -257,7 +257,10 @@ text(y = c(1, 2, 3), x = 172, labels = c(&quot;N = 1000&quot;, &quot;N = 100&quo
 </div>
 <div id="the-bootstrap" class="section level2">
 <h2>The bootstrap</h2>
-<p>The bootstrap has these steps: 1: approximate the sampling distribution by sampling with replacement from your original sample.</p>
+<p>The bootstrap has these steps:</p>
+<ol style="list-style-type: decimal">
+<li>approximate the sampling distribution by taking the mean of n repeated samples with replacement from your original sample.</li>
+</ol>
 <p>Huh? Only one step? Is it that simple?</p>
 <p>Yes:</p>
 <pre class="r"><code># Let&#39;s bootstrap 10000 times!
@@ -274,7 +277,7 @@ hist(mean_sampling_distribution, freq = FALSE, xlim = c(175, 187), axes = FALSE,
 axis(1, at = c(175, 178, 181, 184, 187))</code></pre>
 <p><img src="bootstrap_files/figure-html/boot-1.svg" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(opt)</code></pre>
-<p>Great! Now we have an <em>empirical</em> sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: order sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!</p>
+<p>Great! Now we have an <em>empirical</em> sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!</p>
 <pre class="r"><code>CIbootstrap &lt;- quantile(mean_sampling_distribution, probs = c(0.025, 0.975))
 
 # plot
