@@ -305,7 +305,41 @@ text(y = c(1, 2), x = 172, labels = c(&quot;Bootstrap CI&quot;, &quot;Theoretica
 points(c(meanm, meanm), c(2, 1), bg = c(&quot;black&quot;, &quot;dark green&quot;), col = c(&quot;black&quot;, 
     &quot;dark green&quot;), pch = 24)</code></pre>
 <p><img src="bootstrap_files/figure-html/bootCI-1.svg" style="display: block; margin: auto;" /></p>
-<p>As you can see, that’s very close to the original theoretical CI! However, the advantage is that this does not have the assumption of a sampling distribution in the form of a <em>t</em>-distribution. Not unlike our friend Baron Munchausen, we have magically done away with a problem (distributional assumption) by pulling ourselves up from our bootstraps! Fantastic! Or is it?</p>
+<p>As you can see, that’s indeed very close to the original theoretical CI.</p>
+</div>
+<div id="the-advantage" class="section level2">
+<h2>The advantage</h2>
+<p>The advantage of this method is that this does not require the researcher to know the exact form of the sampling distribution. We can now create CIs (and thereby an estimate of precision) for nearly any statistic that we think about, such as (a) the fifth percentile, (b) the median, (c) the ninety-ninth percentile, (d) this completely arbitrary statistic called <em>van kesteren measure</em> that I just came up with: <span class="math display">\[\hat{k} = \bar{x}\cdot\frac{1}{N}\sum_{i=1}^N |x_i^\frac{1}{3}-\sqrt{\text{median}(x)}|\]</span></p>
+<p>Probably there are analytical solutions to the sampling distributions of these measures (and I think it is likely that they have been derived at some point in the 1940s) but I don’t know them so I’ll bootstrap:</p>
+<pre class="r"><code>vkmeasure &lt;- function(x) {
+    return(mean(x)/length(x) * sum(abs(x^(1/3) - sqrt(median(x)))))
+}
+
+perc5 &lt;- median &lt;- perc99 &lt;- vkmeas &lt;- numeric(10000)
+
+for (i in 1:10000) {
+    bootstrap_sample &lt;- sample(large, replace = T)  # bootstrap from large this time
+    perc5[i] &lt;- quantile(bootstrap_sample, probs = 0.05)
+    median[i] &lt;- median(bootstrap_sample)
+    perc99[i] &lt;- quantile(bootstrap_sample, probs = 0.99)
+    vkmeas[i] &lt;- vkmeasure(bootstrap_sample)
+}
+
+par(mfrow = c(2, 2))
+hist(perc5, freq = FALSE, axes = FALSE, breaks = 30, xlab = &quot;Height in cm&quot;, 
+    ylab = &quot;&quot;, main = &quot;Fifth percentile&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+axis(1)
+hist(median, freq = FALSE, axes = FALSE, breaks = 30, xlab = &quot;Height in cm&quot;, 
+    ylab = &quot;&quot;, main = &quot;Median&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+axis(1)
+hist(perc99, freq = FALSE, axes = FALSE, breaks = 30, xlab = &quot;Height in cm&quot;, 
+    ylab = &quot;&quot;, main = &quot;Ninety-ninth percentile&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+axis(1)
+hist(vkmeas, freq = FALSE, axes = FALSE, breaks = 30, xlab = &quot;vk units&quot;, ylab = &quot;&quot;, 
+    main = &quot;van Kesteren measure&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+axis(1)</code></pre>
+<p><img src="bootstrap_files/figure-html/bootCI2-1.svg" style="display: block; margin: auto;" /></p>
+<p>As you can see, the distributions are a little strange, mainly due to the first three measures being more unstable and dependent on sample characteristics. In the end, however, we have magically done away with a problem - that of distributional assumptions - by pulling ourselves up from our bootstraps, not unlike our friend Baron Munchausen! Fantastic! Or is it?</p>
 </div>
 <div id="the-downside" class="section level2">
 <h2>The downside</h2>
@@ -365,11 +399,9 @@ axis(1, at = c(130, 155, 180, 205, 230))
 
 mtext(&quot;Frequency&quot;, side = 2, line = 0, col = &quot;#00008B&quot;)
 mtext(&quot;Height in cm&quot;, side = 1, line = 3)
-
-
 mtext(&quot;Selection probability&quot;, side = 4, line = 0, col = &quot;#006400&quot;)</code></pre>
 <p><img src="bootstrap_files/figure-html/sampprobs-1.svg" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(opt)</code></pre>
+<p>Now let’s take our regular samples out of these sampling frames</p>
 <pre class="r"><code># Let&#39;s sample from these sampling frames!
 sample1 &lt;- sample(popsorted, size = 100, prob = probs1)
 sample2 &lt;- sample(popbenl, size = 100, prob = probs2)
@@ -387,7 +419,7 @@ mtext(&quot;N = 100&quot;, side = 2, line = 0)
 mtext(&quot;Height in cm&quot;, side = 1, line = 3)
 
 hist(sample2, freq = FALSE, ylim = c(0, 0.06), xlim = c(130, 230), axes = FALSE, 
-    breaks = 30, xlab = &quot;&quot;, ylab = &quot;&quot;, main = &quot;&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
+    breaks = 45, xlab = &quot;&quot;, ylab = &quot;&quot;, main = &quot;&quot;, col = &quot;#1E90FF88&quot;, border = &quot;#00008B&quot;)
 polygon(density(sample2, from = 130, to = 230), cex = 2, col = &quot;#1E90FF44&quot;, 
     border = &quot;#00008B&quot;, lwd = 2)
 abline(v = 180.7, col = &quot;white&quot;, lwd = 2)

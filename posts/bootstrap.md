@@ -212,7 +212,51 @@ points(c(meanm, meanm), c(2, 1), bg = c("black", "dark green"), col = c("black",
 
 <img src="bootstrap_files/figure-html/bootCI-1.svg" style="display: block; margin: auto;" />
 
-As you can see, that's very close to the original theoretical CI! However, the advantage is that this does not have the assumption of a sampling distribution in the form of a *t*-distribution. Not unlike our friend Baron Munchausen, we have magically done away with a problem (distributional assumption) by pulling ourselves up from our bootstraps! Fantastic! Or is it?
+As you can see, that's indeed very close to the original theoretical CI.
+
+## The advantage
+The advantage of this method is that this does not require the researcher to know the exact form of the sampling distribution. We can now create CIs (and thereby an estimate of precision) for nearly any statistic that we think about, such as (a) the fifth percentile, (b) the median, (c) the ninety-ninth percentile, (d) this completely arbitrary statistic called *van kesteren measure* that I just came up with: 
+\[\hat{k} = \bar{x}\cdot\frac{1}{N}\sum_{i=1}^N |x_i^\frac{1}{3}-\sqrt{\text{median}(x)}|\]
+
+Probably there are analytical solutions to the sampling distributions of these measures (and I think it is likely that they have been derived at some point in the 1940s) but I don't know them so I'll bootstrap:
+
+
+```r
+vkmeasure <- function(x) {
+    return(mean(x)/length(x) * sum(abs(x^(1/3) - sqrt(median(x)))))
+}
+
+perc5 <- median <- perc99 <- vkmeas <- numeric(10000)
+
+for (i in 1:10000) {
+    bootstrap_sample <- sample(large, replace = T)  # bootstrap from large this time
+    perc5[i] <- quantile(bootstrap_sample, probs = 0.05)
+    median[i] <- median(bootstrap_sample)
+    perc99[i] <- quantile(bootstrap_sample, probs = 0.99)
+    vkmeas[i] <- vkmeasure(bootstrap_sample)
+}
+
+par(mfrow = c(2, 2))
+hist(perc5, freq = FALSE, axes = FALSE, breaks = 30, xlab = "Height in cm", 
+    ylab = "", main = "Fifth percentile", col = "#1E90FF88", border = "#00008B")
+axis(1)
+hist(median, freq = FALSE, axes = FALSE, breaks = 30, xlab = "Height in cm", 
+    ylab = "", main = "Median", col = "#1E90FF88", border = "#00008B")
+axis(1)
+hist(perc99, freq = FALSE, axes = FALSE, breaks = 30, xlab = "Height in cm", 
+    ylab = "", main = "Ninety-ninth percentile", col = "#1E90FF88", border = "#00008B")
+axis(1)
+hist(vkmeas, freq = FALSE, axes = FALSE, breaks = 30, xlab = "vk units", ylab = "", 
+    main = "van Kesteren measure", col = "#1E90FF88", border = "#00008B")
+axis(1)
+```
+
+<img src="bootstrap_files/figure-html/bootCI2-1.svg" style="display: block; margin: auto;" />
+
+
+As you can see, the distributions are a little strange, mainly due to the first three measures being more unstable and dependent on sample characteristics. In the end, however, we have magically done away with a problem - that of distributional assumptions - by pulling ourselves up from our bootstraps, not unlike our friend Baron Munchausen! Fantastic! Or is it?
+
+
 
 
 ## The downside
@@ -278,17 +322,14 @@ axis(1, at = c(130, 155, 180, 205, 230))
 
 mtext("Frequency", side = 2, line = 0, col = "#00008B")
 mtext("Height in cm", side = 1, line = 3)
-
-
 mtext("Selection probability", side = 4, line = 0, col = "#006400")
 ```
 
 <img src="bootstrap_files/figure-html/sampprobs-1.svg" style="display: block; margin: auto;" />
 
-```r
-par(opt)
-```
 
+
+Now let's take our regular samples out of these sampling frames
 
 
 ```r
@@ -309,7 +350,7 @@ mtext("N = 100", side = 2, line = 0)
 mtext("Height in cm", side = 1, line = 3)
 
 hist(sample2, freq = FALSE, ylim = c(0, 0.06), xlim = c(130, 230), axes = FALSE, 
-    breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
+    breaks = 45, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
 polygon(density(sample2, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
     border = "#00008B", lwd = 2)
 abline(v = 180.7, col = "white", lwd = 2)
