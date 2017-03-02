@@ -175,9 +175,7 @@ axis(1, at = c(175, 178, 181, 184, 187))
 
 <img src="bootstrap_files/figure-html/boot-1.svg" style="display: block; margin: auto;" />
 
-```r
-par(opt)
-```
+
 
 Great! Now we have an *empirical* sampling distribution. What do we do now in order to get an estimate of our precision in the form of a confidence interval? That is simple too: sort the means attained from the bootstrap samples from low to high, and look at the 2.5th and 97.5th percentile. This yields a 95% bootstrap CI!
 
@@ -219,7 +217,113 @@ As you can see, that's very close to the original theoretical CI! However, the a
 
 ## The downside
 
-There is one major point I have not yet touched upon: in our simulation we assumed that each person in our population has the same probability of being sampled - the *sampling probability*. 
+There is one major point I have not yet touched upon: in our simulation we assumed that each person $i$ in our population has the same probability of being sampled - the *sampling probability* $\pi_i$. In practice this is rarely the case: we have to deal with a sampling procedure. Let's design a sampling procedure!
+
+I assume that we do not have a complete register of all hypothetical Dutch men. Instead, I define two (strange) sampling strategies:
+
+1. I go to the most busy street in the city centre on a Sunday during midday and I take a picture. With intensely cool facial recognition software I identify the people on this picture and send them an e-card to invite them to participate in my study. The problem is that I see a disproportionately large amount of tall people because they stick out from the mass. This is called undercoverage of the population.
+
+2. I go to a primary school at the border of the Netherlands and Belgium and I measure the height of every person I see. Obviously, these are mostly kids (and a few teachers). There is an additional problem with this: 30% of the kids at the school are Belgian, which is not the population we are interested in. The Belgians do not come from our same tall-person distribution but probably from a distribution with a much much lower mean height! This phenomenon is called overcoverage.
+
+To see what happens in each of these cases, we should define some sampling probabilities. 
+
+
+```r
+# for the first case tall people are more likely to be selected (prob sum to
+# 1)
+popsorted <- sort(pop)
+probs1 <- sort(pop - min(pop))/sum(pop - min(pop))
+
+
+# for the second case we need to make the belgian distribution.
+belgianpop <- rnorm(n = 11190846, mean = 170.2, sd = 7.5)
+
+# we will sample mostly children, who are all below 150 cm tall. There are
+# 23 children for every adult:
+dutchprob2 <- ifelse(pop < 150, 23, 1)
+dutchprob2 <- dutchprob2/sum(dutchprob2)  # sum to 1
+
+belgiprob2 <- ifelse(belgianpop < 150, 23, 1)
+belgiprob2 <- belgiprob2/sum(belgiprob2)  # sum to 1
+
+# and let's assume that there are 30% belgians and 70% dutch at the school
+popbenl <- c(pop, belgianpop)
+probs2 <- c(dutchprob2 * 0.7, belgiprob2 * 0.3)
+
+
+opt <- par(mfrow = c(2, 1), mar = c(4, 2, 0, 2), oma = c(0, 0, 3, 0))
+# plot the distribution
+hist(pop, freq = FALSE, ylim = c(0, 0.06), xlim = c(120, 240), axes = FALSE, 
+    breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
+polygon(density(pop, from = 130, to = 230), cex = 2, col = "#1E90FF44", border = "#00008B", 
+    lwd = 2)
+abline(v = 180.7, col = "white", lwd = 2)
+axis(1, at = c(130, 155, 180, 205, 230))
+
+mtext("Population height distribution", side = 3, line = 1, cex = 1.8, outer = TRUE)
+mtext("Frequency", side = 2, line = 0, col = "#00008B")
+par(new = T)
+plot(popsorted[c(1, length(probs1))], probs1[c(1, length(probs1))], xlim = c(130, 
+    230), type = "l", axes = FALSE, ylab = "", xlab = "", col = "white")
+polygon(x = c(popsorted[c(1, length(probs1))], popsorted[length(probs1)]), y = c(probs1[c(1, 
+    length(probs1))], 0), border = "#006400", col = "#32CD3288")
+mtext("Selection probability", side = 4, line = 0, col = "#006400")
+
+hist(popbenl, freq = FALSE, ylim = c(0, 0.06), xlim = c(120, 240), axes = FALSE, 
+    breaks = 45, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
+polygon(density(popbenl, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
+    border = "#00008B", lwd = 2)
+abline(v = mean(popbenl), col = "white", lwd = 2)
+axis(1, at = c(130, 155, 180, 205, 230))
+
+mtext("Frequency", side = 2, line = 0, col = "#00008B")
+mtext("Height in cm", side = 1, line = 3)
+
+
+mtext("Selection probability", side = 4, line = 0, col = "#006400")
+```
+
+<img src="bootstrap_files/figure-html/sampprobs-1.svg" style="display: block; margin: auto;" />
+
+```r
+par(opt)
+```
+
+
+
+```r
+# Let's sample from these sampling frames!
+sample1 <- sample(popsorted, size = 100, prob = probs1)
+sample2 <- sample(popbenl, size = 100, prob = probs2)
+
+par(mfrow = c(2, 1))
+# plot the distribution
+hist(sample1, freq = FALSE, ylim = c(0, 0.06), xlim = c(130, 230), axes = FALSE, 
+    breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
+polygon(density(sample1, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
+    border = "#00008B", lwd = 2)
+abline(v = 180.7, col = "white", lwd = 2)
+axis(1, at = c(130, 155, 180, 205, 230))
+mtext("Sample 1 histogram", side = 3, line = 1, cex = 1.8)
+mtext("N = 100", side = 2, line = 0)
+mtext("Height in cm", side = 1, line = 3)
+
+hist(sample2, freq = FALSE, ylim = c(0, 0.06), xlim = c(130, 230), axes = FALSE, 
+    breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", border = "#00008B")
+polygon(density(sample2, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
+    border = "#00008B", lwd = 2)
+abline(v = 180.7, col = "white", lwd = 2)
+axis(1, at = c(130, 155, 180, 205, 230))
+mtext("Sample 2 histogram", side = 3, line = 1, cex = 1.8)
+mtext("N = 100", side = 2, line = 0)
+mtext("Height in cm", side = 1, line = 3)
+```
+
+<img src="bootstrap_files/figure-html/coverage-errors-1.svg" style="display: block; margin: auto;" />
+
+```r
+par(mfrow = c(1, 1))
+```
 
 
 ###[Back to index](../index.html)
