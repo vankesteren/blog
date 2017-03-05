@@ -36,6 +36,11 @@
 [### How a deterministic machine generates random values]: #
 
 
+## [baron bootstrap](posts/bootstrap.html)
+
+#### Generating intuiton around sampling from samples
+
+
 ## [densy](posts/densy.html)
 
 #### An app to visualise different probability distributions

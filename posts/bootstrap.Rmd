@@ -68,7 +68,7 @@ mtext("Height in cm", side = 1, line = 3)
 
 Let's look how tall the tallest man from the hypothetical all-men Netherlands is, along with some other statistics!
 
-```{r tidy = TRUE}
+```{r popchar, tidy = TRUE}
 cat(" Statistics about the population:\n",
     "--------------------------------\n",
     "The shortest person is ", min(pop), " cm tall.\n",
@@ -259,116 +259,43 @@ axis(1)
 ```
 
 
-As you can see, the distributions are a little strange, mainly due to the first three measures being more unstable and dependent on sample characteristics. In the end, however, we have magically done away with a problem - that of distributional assumptions - by pulling ourselves up from our bootstraps, not unlike our friend Baron Munchausen! Fantastic! Or is it?
+We have magically done away with a problem - that of distributional assumptions - by pulling ourselves up from our bootstraps, not unlike our friend Baron Munchausen! Fantastic! Or is it?
 
+Of course, there are some downsides to this approach; it is not the magical solution to getting rid of distributional assumptions in any situation. As you can see in the Fifth Percentile graph in the image above, there is some discreteness to the distribution that we do not expect in the actual sampling distribution of the fifth percentile characteristic:
 
+```{r FifthPerc, tidy=TRUE, fig.align="center"}
+# Sample 10000 times from the ACTUAL population
+perc5actual <- numeric(10000)
+for (i in 1:10000){
+  smp <- sample(pop, 1000)
+  perc5actual[i] <- quantile(smp, probs = 0.05)
+}
 
-
-## The downside
-
-There is one major point I have not yet touched upon: in our simulation we assumed that each person $i$ in our population has the same probability of being sampled - the *sampling probability* $\pi_i$. In practice this is rarely the case: we have to deal with a sampling procedure. Let's design a sampling procedure!
-
-I assume that we do not have a complete register of all hypothetical Dutch men. Instead, I define two (strange) sampling strategies:
-
-1. I go to the most busy street in the city centre on a Sunday during midday and I take a picture. With intensely cool facial recognition software I identify the people on this picture and send them an e-card to invite them to participate in my study. The problem is that I see a disproportionately large amount of tall people because they stick out from the mass. This is called undercoverage of the population.
-
-2. I go to a primary school at the border of the Netherlands and Belgium and I measure the height of every person I see. Obviously, these are mostly kids (and a few teachers). There is an additional problem with this: 30% of the kids at the school are Belgian, which is not the population we are interested in. The Belgians do not come from our same tall-person distribution but probably from a distribution with a much much lower mean height! This phenomenon is called overcoverage.
-
-To see what happens in each of these cases, we should define some sampling probabilities. 
-
-```{R sampprobs, tidy=TRUE, fig.align="center"}
-# for the first case tall people are more likely to be selected (prob sum to 1)
-popsorted <- sort(pop)
-probs1 <- sort(pop-min(pop))/sum(pop-min(pop))
-
-
-# for the second case we need to make the belgian distribution.
-belgianpop <- rnorm(n = 11190846, mean = 170.2, sd = 7.5)
-
-# we will sample mostly children, who are all below 150 cm tall. There are 23 children for every adult:
-dutchprob2 <- ifelse(pop < 150, 23, 1)
-dutchprob2 <- dutchprob2/sum(dutchprob2) # sum to 1
-
-belgiprob2 <- ifelse(belgianpop < 150, 23, 1)
-belgiprob2 <- belgiprob2/sum(belgiprob2) # sum to 1
-
-# and let's assume that there are 30% belgians and 70% dutch at the school
-popbenl <- c(pop,belgianpop)
-probs2 <- c(dutchprob2*0.7, belgiprob2*0.3)
-
-
-opt <- par(mfrow = c(2,1), mar= c(4,2,0,2), oma = c(0,0,3,0))
-# plot the distribution
-hist(pop, freq = FALSE, ylim = c(0,0.06), xlim = c(120, 240), axes = FALSE, 
-     breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", 
+# Compare bootstrap to actual sampling distribution
+opt <- par(mfrow = c(2,1), mar = c(4, 4, 0, 4))
+hist(perc5, freq = FALSE, xlim = c(166, 171),
+     axes = FALSE, breaks = 30, xlab = "", 
+     ylab = "", main = "", col = "#1E90FF88", 
      border = "#00008B")
-polygon(density(pop, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
-        border = "#00008B", lwd = 2)
-abline(v = 180.7, col = "white", lwd = 2)
-axis(1, at = c(130,155,180,205,230))
-
-mtext("Population height distribution", side = 3, line = 1, cex = 1.8, outer = TRUE)
-mtext("Frequency", side = 2, line = 0, col = "#00008B")
-par(new = T)
-plot(popsorted[c(1,length(probs1))], probs1[c(1,length(probs1))], 
-     xlim = c(130, 230), type = "l", axes = FALSE, ylab = "", xlab = "", 
-     col = "white")
-polygon(x = c(popsorted[c(1, length(probs1))],popsorted[length(probs1)]),
-        y = c(probs1[c(1, length(probs1))], 0),
-        border = "#006400", col = "#32CD3288")
-mtext("Selection probability", side = 4, line = 0, col = "#006400")
-
-hist(popbenl, freq = FALSE, ylim = c(0,0.06), xlim = c(120, 240), axes = FALSE, 
-     breaks = 45, xlab = "", ylab = "", main = "", col = "#1E90FF88", 
+mtext(text = "Bootstrap", side = 2)
+axis(1)
+hist(perc5actual, freq = FALSE, xlim = c(166, 171),
+     axes = FALSE, breaks = 30, xlab = "Height in cm", 
+     ylab = "",main = "", col = "#1E90FF88", 
      border = "#00008B")
-polygon(density(popbenl, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
-        border = "#00008B", lwd = 2)
-abline(v = mean(popbenl), col = "white", lwd = 2)
-axis(1, at = c(130,155,180,205,230))
-
-mtext("Frequency", side = 2, line = 0, col = "#00008B")
-mtext("Height in cm", side = 1, line = 3)
-mtext("Selection probability", side = 4, line = 0, col = "#006400")
-
+mtext(text = "Actual", side = 2)
+axis(1)
 ```
 
-```{r paropt2, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
-par(opt)
-```
+In this case the bootstrap sampling distribution does not work so well for determining the uncertainty or 95% confidence interval around the statistic of interest. As seen in this figure, the actual sampling distribution looks quite different to that inferred from bootstrap. How would we solve this problem? There are several ways:
 
-Now let's take our regular samples out of these sampling frames
+1. find the analytical sampling distribution form and construct a CI based on that
+2. make a larger sample which will contain more different values (often infeasible)
+3. smooth the bootstrap procedure, for example by adding some random noise to the samples[^bstnoise]
 
-```{R coverage-errors, tidy=TRUE, fig.align="center"}
-# Let's sample from these sampling frames!
-sample1 <- sample(popsorted, size = 100, prob = probs1)
-sample2 <- sample(popbenl, size = 100, prob = probs2)
+[^bstnoise]: Yes, the source is a wikipedia link: https://en.wikipedia.org/wiki/Bootstrapping_(statistics)#Smoothed_bootstrap
 
-par(mfrow = c(2,1))
-# plot the distribution
-hist(sample1, freq = FALSE, ylim = c(0,0.06), xlim = c(130, 230), axes = FALSE, 
-     breaks = 30, xlab = "", ylab = "", main = "", col = "#1E90FF88", 
-     border = "#00008B")
-polygon(density(sample1, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
-        border = "#00008B", lwd = 2)
-abline(v = 180.7, col = "white", lwd = 2)
-axis(1, at = c(130,155,180,205,230))
-mtext("Sample 1 histogram", side = 3, line = 1, cex = 1.8)
-mtext("N = 100", side = 2, line = 0)
-mtext("Height in cm", side = 1, line = 3)
-
-hist(sample2, freq = FALSE, ylim = c(0,0.06), xlim = c(130, 230), axes = FALSE, 
-     breaks = 45, xlab = "", ylab = "", main = "", col = "#1E90FF88", 
-     border = "#00008B")
-polygon(density(sample2, from = 130, to = 230), cex = 2, col = "#1E90FF44", 
-        border = "#00008B", lwd = 2)
-abline(v = 180.7, col = "white", lwd = 2)
-axis(1, at = c(130,155,180,205,230))
-mtext("Sample 2 histogram", side = 3, line = 1, cex = 1.8)
-mtext("N = 100", side = 2, line = 0)
-mtext("Height in cm", side = 1, line = 3)
-par(mfrow = c(1,1))
-
-```
-
+## Take-home message
+The bootstrap is a fantastic means of nonparametrically determining the uncertainty of your estimate, but it should be used with care. Inspect the resulting distribution for discreteness such as in the 5th percentile graph above. And mathematical statistics is not completely obsolete ;)
 
 ###[Back to index](../index.html)
