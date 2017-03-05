@@ -7,4 +7,13 @@
     "showHighlights": false
   }
 </script>
-<script src="https://hypothes.is/embed.js" async></script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
+

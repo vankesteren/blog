@@ -20,6 +20,10 @@
 <script src="densy_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="densy_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="densy_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="densy_files/navigation-1.1/tabsets.js"></script>
+<script src="densy_files/navigation-1.1/codefolding.js"></script>
+<link href="densy_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="densy_files/highlightjs-1.1/highlight.js"></script>
 <!DOCTYPE HTML>
 <link href="../img/favicon.png" rel="shortcut icon" type="image/png">
 <link href="../img/favicon.png" rel="apple-touch-icon" />
@@ -29,13 +33,17 @@
     "showHighlights": false
   }
 </script>
-<script src="https://hypothes.is/embed.js" async></script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="densy_files/highlight/default.css"
-      type="text/css" />
-<script src="densy_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -106,10 +114,10 @@ button.code-folding-btn:focus {
 </style>
 
 
+
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="densy_files/navigation-1.1/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -117,7 +125,9 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<script src="densy_files/navigation-1.1/codefolding.js"></script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 <script>
 $(document).ready(function () {
   window.initializeCodeFolding("hide" === "show");
@@ -165,7 +175,7 @@ $(document).ready(function () {
 <p>I created a web-app called <code>Densy</code>, a fun-sounding combination of “density” and “shiny”. <code>Densy</code> is not finished, because I went on to do other things, but I still use it every now and then to get a <em>feeling</em> with probability distributions. For example, when I stumbled upon the <em>Cauchy distribution</em> after a long time, I went back to <code>Densy</code> to play with it.</p>
 <p>In <code>Densy</code>, you can edit parameters of distribution functions and see the changes immediately. This is what it looks like for the normal distribution I outlined above:</p>
 <div class="figure">
-<img src="densy_files/normal.png" alt="" />
+<img src="densy_files/normal.png" />
 
 </div>
 <p>In the left-hand panel, you can easily change the parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>, and you can opt to see a confidence interval as well.</p>
@@ -198,9 +208,13 @@ shiny::runGitHub(&quot;Densy-Develop&quot;, &quot;vankesteren&quot;)</code></pre
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 

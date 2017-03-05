@@ -20,17 +20,30 @@
 <script src="crossyroad_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="crossyroad_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="crossyroad_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="crossyroad_files/navigation-1.1/tabsets.js"></script>
+<script src="crossyroad_files/navigation-1.1/codefolding.js"></script>
+<link href="crossyroad_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="crossyroad_files/highlightjs-1.1/highlight.js"></script>
 <!DOCTYPE HTML>
 <link href="../img/favicon.png" rel="shortcut icon" type="image/png">
 <link href="../img/favicon.png" rel="apple-touch-icon" />
 
-<script src="https://hypothes.is/embed.js" async></script>
+<script type="application/json" class="js-hypothesis-config">
+  {
+    "showHighlights": false
+  }
+</script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="crossyroad_files/highlight/default.css"
-      type="text/css" />
-<script src="crossyroad_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -101,10 +114,10 @@ button.code-folding-btn:focus {
 </style>
 
 
+
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="crossyroad_files/navigation-1.1/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -112,7 +125,9 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<script src="crossyroad_files/navigation-1.1/codefolding.js"></script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 <script>
 $(document).ready(function () {
   window.initializeCodeFolding("hide" === "show");
@@ -236,9 +251,13 @@ abline(exp(coef(fit)), col = &quot;blue&quot;)</code></pre>
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 
