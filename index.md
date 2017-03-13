@@ -36,6 +36,11 @@
 [### How a deterministic machine generates random values]: #
 
 
+## [sequential statistics](posts/sequentialstats.html)
+
+#### How to calculate the mean of a value stream
+
+
 ## [baron bootstrap](posts/bootstrap.html)
 
 #### Generating intuiton around sampling from samples

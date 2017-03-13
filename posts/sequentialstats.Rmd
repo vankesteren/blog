@@ -1,0 +1,88 @@
+---
+title: "Sequential Statistics"
+author: "Erik-Jan van Kesteren"
+output:
+  html_document:
+    code_folding: hide
+    includes:
+      in_header: postheader.html
+    keep_md: yes
+    self_contained: no
+    theme: journal
+---
+
+```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = 'svg')
+```
+
+###[Back to index](../index.html)
+
+
+
+## The problem
+How do we calculate a sample mean? This is probably one of the most basic questions in statistics, with as its common answer the following: Given a vector of sample values $\bf{x}$ of length $N$, the sample mean $m$ is defined as 
+\[m = \frac{1}{N}\sum^N_{i=1}x_i\]
+
+But this first assumption, _given a vector of sample values_, recently did not hold for me. The sheer size of the vector that I needed to process made sure it did not fit on my computer. Even worse, I had no way of knowing how big this vector would exactly be! My question was thus: how do I calculate the mean of a stream of sample values of indetermined length?
+
+## Solution
+The solution to this was rather simple for calculation of the mean. We initialise the value of the mean to 0, and then _update_ our current guess of the mean with the next value's weighted deviation from the current mean. This happens like so:
+
+\[m_{i} = m_{i-1} + \frac{(x_i-m_{i-1})}{i}\]
+
+Reading the formula in words, the $i^{th}$ mean is the $(i-1)^{th}$ mean plus the deviation of the $i^{th}$ input value from this current mean divided by the current $i$, i.e., the amount of values that have been input. 
+
+In code this is extremely simple to implement (click the code button on the right):
+
+```{r seqmean, tidy=TRUE, collapse=FALSE}
+set.seed(3665364)
+# let's assume we receive data of length 1234
+streamlength <- 1234
+
+# initialise m_i
+m_i <- 0
+for (i in 1:streamlength){
+  m_prev <- m_i
+  x_i <- rnorm(1,0,3)
+  m_i <- m_prev + (x_i-m_prev) / i
+}
+
+print(m_i)
+```
+
+Note that in the above code we never save the full vector $\bf{x}$; we only ever save the current and previous versions of the mean. This is perfect for an extremely large, variable length input vector such as the one I talked about in the introduction!
+
+```{r seqplot, fig.align="center", tidy=TRUE}
+set.seed(3665364)
+# let's assume we receive data of length 1234
+streamlength <- 1234
+
+# initialise m_i
+means <- numeric(streamlength)
+for (i in 1:streamlength){
+  x_i <- rnorm(1,0,3)
+  means[i] <- ifelse(i==1,x_i,means[i-1] + (x_i-means[i-1]) / i)
+}
+
+par(family="serif")
+plot(1:streamlength, means, type = "l", main = "Development of mean over stream",
+     xlab = "i", ylab = "Mean", bty = "L", lwd = 1.5)
+
+
+```
+
+Notice the big changes at the start of the stream, and the smaller changes at the end, asymptotically converging to the "true" mean value that we set here at 0.
+
+## Bayesian estimation?
+We can also see this as a form of bayesian updating, if we turn the formula around like so:
+
+\[m_{i} = \frac{(x_i-m_{i-1}) + i \cdot m_{i-1}}{i}\]
+
+Here, we set the prior to be $i \cdot m_{i-1}$, then we see $(x_i-m_{i-1})$ as our new data/evidence, $m_i$ is our posterior, and $i$ is the normalising constant. Cool!
+
+
+## The question
+For the mean this was simple to implement. The question I'm pondering in the back of my mind throughout all this is the following: can _any_ statistic be transformed into such a sequential statistic? How does this work for variance? Standard deviation? The median / other quantiles? If you let me know, I'll be sure to update this blog post with the additions.
+
+###[Back to index](../index.html)
