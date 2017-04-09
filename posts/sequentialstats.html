@@ -209,6 +209,47 @@ plot(1:streamlength, means, type = &quot;l&quot;, main = &quot;Development of me
 <p><span class="math display">\[m_{i} = \frac{(x_i-m_{i-1}) + i \cdot m_{i-1}}{i}\]</span></p>
 <p>Here, we set the prior to be <span class="math inline">\(i \cdot m_{i-1}\)</span>, then we see <span class="math inline">\((x_i-m_{i-1})\)</span> as our new data/evidence, <span class="math inline">\(m_i\)</span> is our posterior, and <span class="math inline">\(i\)</span> is the normalising constant. Cool!</p>
 </div>
+<div id="update-more-efficient" class="section level2">
+<h2>Update: More efficient!</h2>
+<p>The algorithm above translates nicely into the bayesian framework, but as with so many algorithms, it can be made much more efficiently. It turns out that all we have to do is remember the <code>sum</code> of the values input in the stream and a counter <code>i</code> that indicates how many values went in. Then, when asking for the mean, all we need to do is <span class="math inline">\(m_i=\frac{\texttt{sum}}{\texttt{i}}\)</span>. Simple!</p>
+<p>This also extends to the variance and higher-order moments. For variance, we need to remember the <code>sum</code>, the <code>sum of squares</code>, and the counter <code>i</code>. Then, we can calculate the variance using the formula <span class="math inline">\(Var(X) = E[X^2] - (E[X])^2\)</span> to calculate the variance: <span class="math inline">\(s^2_i=\frac{\texttt{sum of squares}}{i}-\left(\frac{sum}{i}\right)^2\)</span>. For each higher order moment, we need to remember a higher power sum in this framework.</p>
+<p>Let’s do it!</p>
+<pre class="r"><code>set.seed(3665364)
+# let&#39;s assume we receive data of length 1234
+streamlength &lt;- 1234
+
+# initialise
+sum &lt;- 0
+sumsq &lt;- 0
+i &lt;- 0
+
+for (j in 1:streamlength){
+  value &lt;- rnorm(1,0,3)
+  sum &lt;- sum + value
+  sumsq &lt;- sumsq + value^2
+  i &lt;- i+1
+}
+
+list(sum = sum, 
+     sum_of_squares = sumsq, 
+     i = i, 
+     mean = sum/i,
+     variance = sumsq/i - (sum/i)^2)</code></pre>
+<pre><code>## $sum
+## [1] -104.7634
+## 
+## $sum_of_squares
+## [1] 11547.45
+## 
+## $i
+## [1] 1234
+## 
+## $mean
+## [1] -0.08489741
+## 
+## $variance
+## [1] 9.35053</code></pre>
+</div>
 <div id="the-question" class="section level2">
 <h2>The question</h2>
 <p>For the mean this was simple to implement. The question I’m pondering in the back of my mind throughout all this is the following: can <em>any</em> statistic be transformed into such a sequential statistic? How does this work for variance? Standard deviation? The median / other quantiles? If you let me know, I’ll be sure to update this blog post with the additions.</p>
