@@ -77,7 +77,11 @@ Here, we set the prior to be $i \cdot m_{i-1}$, then we see $(x_i-m_{i-1})$ as o
 ## Update: More efficient!
 The algorithm above translates nicely into the bayesian framework, but as with so many algorithms, it can be made much more efficiently. It turns out that all we have to do is remember the `sum` of the values input in the stream and a counter `i` that indicates how many values went in. Then, when asking for the mean, all we need to do is $m_i=\frac{\texttt{sum}}{\texttt{i}}$. Simple!
 
-This also extends to the variance and higher-order moments. For variance, we need to remember the `sum`, the `sum of squares`, and the counter `i`. Then, we can calculate the variance using the formula $Var(X) = E[X^2] - (E[X])^2$ to calculate the variance: $s^2_i=\frac{\texttt{sum of squares}}{i}-\left(\frac{sum}{i}\right)^2$. For each higher order moment, we need to remember a higher power sum in this framework.
+This is better for three reasons:
+
+1. It's simpler.
+2. It's less prone to numerical problems with your computer: you only perform one operation.
+3. This also extends to the variance and higher-order moments. For variance, we need to remember the `sum`, the `sum of squares`, and the counter `i`. Then, we can calculate the variance using the formula $Var(X) = E[X^2] - (E[X])^2$ to calculate the variance: $s^2_i=\frac{\texttt{sum of squares}}{i}-\left(\frac{sum}{i}\right)^2$. For each higher order moment, we need to remember a higher power sum in this framework.
 
 Let's do it!
 
