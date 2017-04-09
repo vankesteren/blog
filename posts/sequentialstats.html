@@ -216,7 +216,7 @@ plot(1:streamlength, means, type = &quot;l&quot;, main = &quot;Development of me
 <ol style="list-style-type: decimal">
 <li>It’s simpler.</li>
 <li>It’s less prone to numerical problems with your computer: you only perform one operation.</li>
-<li>This also extends to the variance and higher-order moments. For variance, we need to remember the <code>sum</code>, the <code>sum of squares</code>, and the counter <code>i</code>. Then, we can calculate the variance using the formula <span class="math inline">\(Var(X) = E[X^2] - (E[X])^2\)</span> to calculate the variance: <span class="math inline">\(s^2_i=\frac{\texttt{sum of squares}}{i}-\left(\frac{sum}{i}\right)^2\)</span>. For each higher order moment, we need to remember a higher power sum in this framework.</li>
+<li>This also extends to the variance and higher-order moments. For variance, we need to remember the <code>sum</code>, the <code>sum of squares</code>, and the counter <code>i</code>. Then, we can calculate the variance using the formula <span class="math inline">\(Var(X) = E[X^2] - (E[X])^2\)</span> to calculate the variance: <span class="math inline">\(s^2_i=\frac{\texttt{sum of squares}}{\texttt{i}}-\left(\frac{\texttt{sum}}{\texttt{i}}\right)^2\)</span>. For each higher order moment, we need to remember a higher power sum in this framework.</li>
 </ol>
 <p>Let’s do it!</p>
 <pre class="r"><code>set.seed(3665364)
