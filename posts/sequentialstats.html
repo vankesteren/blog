@@ -211,7 +211,7 @@ plot(1:streamlength, means, type = &quot;l&quot;, main = &quot;Development of me
 </div>
 <div id="update-more-efficient" class="section level2">
 <h2>Update: More efficient!</h2>
-<p>The algorithm above translates nicely into the bayesian framework, but as with so many algorithms, it can be made much more efficiently. It turns out that all we have to do is remember the <code>sum</code> of the values input in the stream and a counter <code>i</code> that indicates how many values went in. Then, when asking for the mean, all we need to do is <span class="math inline">\(m_i=\frac{\texttt{sum}}{\texttt{i}}\)</span>. Simple!</p>
+<p>The algorithm above translates nicely into the bayesian framework, but as with so many algorithms, it can be made much more efficient. It turns out that all we have to do is remember the <code>sum</code> of the values input in the stream and a counter <code>i</code> that indicates how many values went in. Then, when asking for the mean, all we need to do is <span class="math inline">\(m_i=\frac{\texttt{sum}}{\texttt{i}}\)</span>. Simple!</p>
 <p>This is better for three reasons:</p>
 <ol style="list-style-type: decimal">
 <li>It’s simpler.</li>
