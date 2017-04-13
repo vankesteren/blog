@@ -49,6 +49,11 @@ output:
 [### How a deterministic machine generates random values]: #
 
 
+[## [How to R Markdown blog](posts/rmarkblog.html)]: #
+
+[### How to create a blog like this with R Markdown]: #
+
+
 ## [sequential statistics](posts/sequentialstats.html)
 
 #### How to calculate the mean of a value stream
