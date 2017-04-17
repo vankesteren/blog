@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Erik-Jan van Kesteren" />
+
+
+<title>Basket</title>
+
+<script src="basket_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="basket_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="basket_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="basket_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="basket_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="basket_files/navigation-1.1/tabsets.js"></script>
+<script src="basket_files/navigation-1.1/codefolding.js"></script>
+<link href="basket_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="basket_files/highlightjs-1.1/highlight.js"></script>
+<!DOCTYPE HTML>
+<link href="../img/favicon.png" rel="shortcut icon" type="image/png">
+<link href="../img/favicon.png" rel="apple-touch-icon" />
+
+<script type="application/json" class="js-hypothesis-config">
+  {
+    "showHighlights": false
+  }
+</script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Basket</h1>
+<h4 class="author"><em>Erik-Jan van Kesteren</em></h4>
+
+</div>
+
+
+<div id="back-to-index" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>transmat etc, basketball player.</p>
+<pre class="r"><code>(b &lt;- c(&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;hit&quot;,&quot;miss&quot;,&quot;hit&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;hit&quot;,&quot;hit&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;miss&quot;,&quot;hit&quot;,&quot;hit&quot;,&quot;hit&quot;,&quot;miss&quot;,&quot;hit&quot;))</code></pre>
+<pre><code>##  [1] &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;hit&quot;  &quot;miss&quot; &quot;hit&quot;  &quot;miss&quot; &quot;miss&quot; &quot;hit&quot;  &quot;hit&quot; 
+## [11] &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;miss&quot; &quot;hit&quot;  &quot;hit&quot;  &quot;hit&quot; 
+## [21] &quot;miss&quot; &quot;hit&quot;</code></pre>
+<p>so that’s the chain.</p>
+<pre class="r"><code>trans.matrix &lt;- function(x, prob = T) {
+    X &lt;- t(as.matrix(x))
+    tt &lt;- table(c(X[, -ncol(X)]), c(X[, -1]))
+    if (prob) 
+        tt &lt;- tt/rowSums(tt)
+    tt
+}
+
+(m &lt;- trans.matrix(b))</code></pre>
+<pre><code>##       
+##              hit      miss
+##   hit  0.4285714 0.5714286
+##   miss 0.3571429 0.6428571</code></pre>
+<p>And we can nicely visualise it using this markov chain generator post by setosa. A equals a hit, B equals a miss. (Go ahead, play around, it’s completely interactive!)</p>
+<iframe src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.6428571%2C0.3571429%5D%2C%5B0.5714286%2C0.4285714%5D%5D%7D" width="100%" height="350px" style="border:none">
+</iframe>
+<div id="back-to-index-1" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
