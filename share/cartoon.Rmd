@@ -137,7 +137,7 @@ For $p=0.05$, this formula yields $\mathrm{MPR} = 2.456$.
 But teacher, that's _still_ not a lot of evidence in favour of $H_1$, is it?
 
 ## 8
-I agree! In general, _p_-values down to about 0.01 are never much more likely to occur under $H_0$ relative to $H_1$, even when we cheat to favout $H_1$. What MPR value is enough for you to believe the result is for you to decide. Some choose to interpret this ratio as an upper bound to the _Bayes Factor_, but that's for another time...
+I agree! In general, _p_-values down to about 0.01 are never much more likely to occur under $H_0$ relative to $H_1$, even when we cheat to favour $H_1$. What MPR value is enough for you to believe the result? That's for you to decide. Some choose to interpret this ratio as an upper bound to the _Bayes Factor_, but that's something for another time...
 
 ## 9
 Thanks teacher!
