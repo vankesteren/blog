@@ -117,7 +117,7 @@ text(x = 0.041, y = 4.5,labels = expression(H[1]), col = "dark green", cex = 1.5
 text(x = 0.14, y = 0.7,labels = expression(H[0]), col = "dark blue", cex = 1.5)
 ```
 
-See? The maximum diagnosticity of a _p_-value of 0.05 is just under 2.5. That means that if you obtain this _p_-value, the optimal alternative hypothesis is less than 2.5 more likely than the null hypothesis. 
+See? The maximum diagnosticity of a _p_-value of 0.05 is just under 2.5. That means that this  _p_-value is a bit less than 2.5 times more likely to appear under $H_1$ than under the null hypothesis. 
 
 ## 6
 Sellke, Bayarri and Berger showed that the MPR can simply be calculated by the following formula: 
