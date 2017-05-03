@@ -1,5 +1,5 @@
 ---
-title: "The Vovk-Sellke Maximum _p_-Ratio /// How diagnostic is a _p_-value?"
+title: "How diagnostic is a _p_-value? An explanation of the Vovk-Sellke bound"
 author: "EJ & EJ"
 date: ""
 output: 
@@ -18,64 +18,95 @@ x <- seq(0, 1, length.out =10000)
 x2 <- seq(0, 0.2, length.out =10000)
 ```
 
-## 0
+For each panel, the visual idea is in italics below each title, panel text in the quote, and the image contents below that. Images are svg vector graphics with transparent backgrounds.
 
-Imagine that we are testing a hypothesis about two statistics, say the means of two groups. Our null hypothesis $H_0$ is that the group means are equal, the alternative hypothesis $H_1$ states that they differ. 
+## 0 -- Establishing shot
+_Establishing shot of for example the outside of the classroom looking in with a creative twist on the "two groups" theme from the text. (looking at two very different classrooms?)_
 
-## 1
-If $H_0$ is true, all possible _p_-values are equally likely. We say that it is uniformly distributed.
+> Imagine that we are doing research on two groups. Our null hypothesis $H_0$ is that the group means are equal, our alternative hypothesis $H_1$ is that they differ. 
+
+## 1 -- H$_0$
+
+_The first image of Sunday in front of the blackboard/whiteboard_
+
+> If $H_0$ is true, all possible _p_-values are equally likely. We say that it is uniformly distributed.
 
 ```{r beta11, fig.width=5, fig.height=5, fig.align="center"}
+par(mar = c(4,5,3,1))
 plot(x, dbeta(x, 1, 1), 
      type = "l", xlim = c(0,1), ylim = c(0,6), bty = "L", 
-     axes = F, ylab = expression("P ("~italic("p")~" | H )"), xlab = expression(italic("p")), 
-     col = "dark blue", lwd = 2, cex = 1.7,main = "no effect")
-axis(2, at = c(0,1,6), lwd = 2, cex = 1.7)
-axis(1, at = seq(0,1,by = 0.5), lwd = 2, cex = 1.7)
+     axes = F, ylab = "", xlab = "", 
+     col = "dark blue", lwd = 2, cex = 1.7)
+axis(2, at = c(0,1,6), lwd = 2, cex = 1.7, las=1)
+axis(1, at = c(0,1), lwd = 2, cex = 1.7)
+
+mtext(side= 3, expression(bold("No Effect")), cex=1.5)
+mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
+mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 ```
 
-## 2
-Instead, when $H_1$ is true, lower _p_-values are more likely than higher ones. By studying _p_-values, Sellke, Bayarri, and Berger (2001) showed that they are roughly _beta_ distributed under general conditions:
+## 2 -- H$_1$
+_A (slightly different?) image of Sunday in front of the blackboard/whiteboard. This image could be wide to accommodate the two plots side-by-side_
+
+> Instead, when $H_1$ is true, lower _p_-values are more likely than higher ones. By studying _p_-values, Sellke, Bayarri, and Berger (2001) showed that they are roughly _beta_ distributed. Let's look at the most interesting part of the $p$-value distribution: the lowest values from 0 to 0.2.
 
 
 ```{r betasmall, fig.width=5, fig.height=5, fig.align="center"}
 # Small effect
-plot(x, dbeta(x, 0.8, 1), 
-     type = "l", xlim = c(0,1), ylim = c(0,6), bty = "L", 
-     axes = F, ylab = expression("P ("~italic("p")~" | H )"), xlab = expression(italic("p")), 
-     col = "dark green", lwd = 2, cex = 4, main = "small effect")
-lines(x = c(0,1), y = c(1,1), lty = 3, col = "dark blue", lwd = 1)
-axis(2, at = c(0,1,6), lwd = 2, cex = 1.7)
-axis(1, at = seq(0,1,by = 0.5), lwd = 2, cex = 1.7)
-text(x = 0.1, y=1.7, expression(H[1]), cex = 1.4)
+par(mar = c(4,5,3,1))
+plot(x2, dbeta(x2, 0.8, 1), 
+     type = "l", xlim = c(0,0.2), ylim = c(0,6), bty = "L", 
+     axes = F, ylab = "", xlab = "", 
+     col = "dark green", lwd = 2)
+lines(x = c(0,0.2), y = c(1,1), lty = 3, col = "dark blue", lwd = 1)
+axis(2, at = c(0,1,6), lwd = 2, cex = 1.7, las=1)
+axis(1, at = c(0,0.2), lwd = 2, cex = 1.7)
+
+text(x = 0.02, y=2.3, expression(H[1]: italic(p) ~ "~ Beta("*xi*"=0.8, 1)"), cex = 1.3, col = "dark green", pos=4)
+mtext(side= 3, expression(bold("Small Effect")), cex=1.5)
+mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
+mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 ```
 ```{r betalarge, fig.width=5, fig.height=5, fig.align="center"}
 # Large effect
-plot(x, dbeta(x, 0.3, 1), 
-     type = "l", xlim = c(0,1), ylim = c(0,6), bty = "L", 
-     axes = F, ylab = expression("P ("~italic("p")~" | H )"), xlab = expression(italic("p")), 
-     col = "dark green", lwd = 2, cex = 4, main = "large effect")
-lines(x = c(0,1), y = c(1,1), lty = 3, col = "dark blue", lwd = 1)
-axis(2, at = c(0,1,6), lwd = 2, cex = 1.7)
-axis(1, at = seq(0,1,by = 0.5), lwd = 2, cex = 1.7)
-text(x = 0.16, y=2, expression(H[1]), cex = 1.4)
+par(mar = c(4,5,3,1))
+plot(x2, dbeta(x2, 0.1, 1), 
+     type = "l", xlim = c(0,0.2), ylim = c(0,6), bty = "L", 
+     axes = F, ylab = "", xlab = "", 
+     col = "dark green", lwd = 2, cex = 4)
+lines(x = c(0,0.2), y = c(1,1), lty = 3, col = "dark blue", lwd = 1)
+axis(2, at = c(0,1,6), lwd = 2, cex = 1.7, las=1)
+axis(1, at = c(0,0.2), lwd = 2, cex = 1.7)
+
+text(x = 0.033, y=3, expression(H[1]: italic(p) ~ "~ Beta("*xi*"=0.1, 1)"), cex = 1.3, col = "dark green", pos=4)
+mtext(side= 3, expression(bold("Large Effect")), cex=1.5)
+mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
+mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 
 ```
 
 
-## 3
-The __diagnosticity__ of a _p_-value is to what extent that _p_-value is more likely under the alternative hypothesis $H_1$ than under the null hypothesis $H_0$. 
+## 3 -- Diagnosticity
+
+> The __diagnosticity__ of a _p_-value is to what extent that _p_-value is more likely under the alternative hypothesis $H_1$ than under the null hypothesis $H_0$. 
 To understand this better, let's consider two "worlds": 
 
-> in world __A__ there is a medium effect and in __B__ there is no effect. We don't know which "world" we live in, but in our statistical test we obtain a _p_-value of 0.05 -- a "significant" difference. How much more likely is it that we receive this _p_-value from world __A__ than from __B__? 
 
-We can use the _p_-value distributions!
+## 4 -- Two worlds
+_See the panel idea in the drawing below. Here, $\mathcal{N}$ means normal distribution._
+
+<img src="./worldspanel.jpeg" width="50%" style="display:block; margin:0 auto;"></img>
+
+
+> in world __A__ there is a medium effect and in __B__ there is no effect. We don't know which "world" we live in, but in our statistical test we obtain a _p_-value of 0.05 -- a "significant" difference. How much more likely is it that we receive this _p_-value from world __A__ than from __B__? We can use the _p_-value distributions!
 
 ```{r worlds, fig.width=5, fig.height=5, fig.align="center"}
+par(mar = c(4,5,3,1))
 plot(x2, dbeta(x2, 0.8, 1), 
      type = "l", xlim = c(0,0.2), ylim = c(0,6), bty = "L", 
-     axes = F, ylab = expression("P ("~italic("p")~" | H )"), xlab = expression(italic("p")), 
-     col = "dark green", lwd = 2, cex = 4, main = "two worlds")
+     axes = F, ylab = "", xlab ="", 
+     col = "dark green", lwd = 2, cex = 4)
+arrows(0.05, -0.5, 0.05, 0.85, length = 0.1, angle = 30, lwd = 2, code = 2, col = "red")
 axis(2, at = c(0,1,round(dbeta(0.05,0.8,1),1),6), lwd = 2, cex = 1.7,las=1)
 axis(1, at = c(0,0.05,0.2), lwd = 2, cex = 1.7)
 lines(x = c(0.05,0.05), y = c(1,dbeta(0.05,0.8,1)), lwd = 1.5)
@@ -86,25 +117,46 @@ points(x = c(0.05,0.05),
              pch = 21, bg = "grey", cex=1.5, lwd=1.5)
 text(x = 0.03, y = 4.5,labels = "World A", col = "dark green", cex = 1.5)
 text(x = 0.14, y = 0.7,labels = "World B", col = "dark blue", cex = 1.5)
+mtext(side= 3, expression(bold("We observe p=0.05,")), cex=1.5, line=1.5)
+mtext(side= 3, expression(bold("which world do inhabit?")), cex=1.5, line=0)
+                      
+mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
+mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 ```
-Because the y-axis in this plot indicates the probability of obtaining a certain _p_-value, we can immediately see the answer by looking at the ratio of probabilities: with a _p_-value of 0.05 it is 1.5 more likely that we are in world __A__. That does not seem such strong evidence in favour of world __A__!
 
-## 4
-But teacher, we could only calculate this because we knew the _true_ effect in world A! In the real world, we don't know the true effect under $H_1$!
+## 5 -- Closeup explanation
+_Closeup of Sunday's face (with in the background still this image?_
 
-## 5
-Correct, so we cherry-pick the effect size that makes $H_1$ look as good as it can be. If we do this, we obtain the _maximum p_-ratio -- the MPR: 
+> Because the y-axis in this plot indicates the probability of obtaining a certain _p_-value, we can immediately see the answer by looking at the ratio of probabilities: with a _p_-value of 0.05 it is 1.5 more likely that we are in world __A__. That does not seem such strong evidence in favour of world __A__!
 
+## 6 -- Class doesn't understand yet!
+_Class/student image asking a question, possibly with raised hand_
+
+> But teacher, we could only calculate this because we knew the _true_ effect in world A! In the real world, we don't know the true effect under $H_1$, so we can't draw the green line!
+
+## 7 -- Idea
+_Back to Sunday (fun twist, maybe she can actually pick cherries?)_
+
+> Correct, so we cheat by cherry-picking the effect size that makes $H_1$ look as good as it can be. If we do this, we obtain the _maximum p_-ratio -- the MPR: 
+
+
+## 8 -- Resolution
+_Whiteboard image again, perhaps Sunday pointing at the 2.5 in the image?_
+
+> See? The maximum diagnosticity of a _p_-value of 0.05 is just under 2.5. That means that this  _p_-value is a bit less than 2.5 times more likely to appear under $H_1$ than under the null hypothesis. 
 ```{r maxratio, fig.width=5, fig.height=5, fig.align="center"}
+par(mar = c(4,5,3,1))
 plot(x2, dbeta(x2, 0.33, 1), 
      type = "l", xlim = c(0,0.2), ylim = c(0,6), bty = "L", 
-     axes = F, ylab = expression("P ("~italic("p")~" | H )"), xlab = expression(italic("p")), 
-     col = "dark green", lwd = 2, cex = 4, main = "maximum p-ratio")
+     axes = F, ylab = "", xlab = "", 
+     col = "dark green", lwd = 2, cex = 4)
 lines(x2, dbeta(x2,0.8,1), col = "dark green", lty = 3)
 lines(x2, dbeta(x2,0.7,1), col = "dark green", lty = 3)
 lines(x2, dbeta(x2,0.4,1), col = "dark green", lty = 3)
 lines(x2, dbeta(x2,0.2,1), col = "dark green", lty = 3)
 lines(x2, dbeta(x2,0.15,1), col = "dark green", lty = 3)
+arrows(0.05, -0.5, 0.05, 0.85, length = 0.1, angle = 30, lwd = 2, code = 2, col = "red")
+
 axis(2, at = c(0,1,round(dbeta(0.05,0.33,1),1),6), lwd = 2, cex = 1.7,las=1)
 axis(1, at = c(0,0.05,0.2), lwd = 2, cex = 1.7)
 lines(x = c(0.05,0.05), y = c(1,dbeta(0.05,0.33,1)), lwd = 1.5)
@@ -113,31 +165,49 @@ lines(x = c(0,0.05), y = rep(dbeta(0.05,0.33,1),2), lty = 3, col = "dark green",
 points(x = c(0.05,0.05), 
              y = c(1, dbeta(0.05,0.33,1)), 
              pch = 21, bg = "grey", cex=1.5, lwd=1.5)
-text(x = 0.041, y = 4.5,labels = expression(H[1]), col = "dark green", cex = 1.5)
-text(x = 0.14, y = 0.7,labels = expression(H[0]), col = "dark blue", cex = 1.5)
+text(x = 0.03, y = 4.5,labels = expression(H[1]: italic(p) ~ "~ Beta("*xi*"=0.33, 1)"), col = "dark green", cex = 1.3, pos = 4)
+text(x = 0.06, y = 0.6,labels = expression(H[0]: italic(p) ~ "~ Beta(1, 1)"), col = "dark blue", cex = 1.3, pos=4)
+
+
+
+mtext(side= 3, expression(bold("Maximum diagnosticity:")), cex=1.5, line = 1.5)
+mtext(side=3,expression(bold("maximum p-ratio")), cex=1.5, line = 0)
+mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5, padj=-2)
+mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 ```
 
-See? The maximum diagnosticity of a _p_-value of 0.05 is just under 2.5. That means that this  _p_-value is a bit less than 2.5 times more likely to appear under $H_1$ than under the null hypothesis. 
 
-## 6
-Sellke, Bayarri and Berger showed that the MPR can simply be calculated by the following formula: 
-\begin{equation}
-\mathrm{MPR} =
-\begin{cases} 
-(-e p \ln p)^{-1} & \mathrm{for} \quad p < \frac{1}{e} \\
-1 & \mathrm{for} \quad p \geq \frac{1}{e} \\
-\end{cases},
-\label{eq:mpr}
-\end{equation}
-This formula was first derived by another wizard, Vladimir Vovk, which is why we called it the "Vovk-Sellke Maximum _p_-Ratio". [JASP](https://www.jasp-stats.org) has an option to show the MPR for each _p_-value you obtain!
 
-For $p=0.05$, this formula yields $\mathrm{MPR} = 2.456$. 
+## 9 -- Math
+_Sunday drawing math on the whiteboard_
 
-## 7
-But teacher, that's _still_ not a lot of evidence in favour of $H_1$, is it?
+> Sellke, Bayarri and Berger showed that the MPR can be calculated like this for low $p$-values. This formula was first derived by Vladimir Vovk, so it's called the "Vovk-Sellke Maximum _p_-Ratio". For $p=0.05$ MPR equals 2.456!
 
-## 8
-I agree! In general, _p_-values down to about 0.01 are never much more likely to occur under $H_0$ relative to $H_1$, even when we cheat to favour $H_1$. What MPR value is enough for you to believe the result? That's for you to decide. Some choose to interpret this ratio as an upper bound to the _Bayes Factor_, but that's something for another time...
+\[\mathrm{MPR}=(-e p \ln p)^{-1} = 2.456\]
 
-## 9
-Thanks teacher!
+
+## 10 -- Software
+_Screenshot of JASP, maybe Sunday behind a computer?_
+
+> [JASP](https://www.jasp-stats.org) has an option to show the MPR for each _p_-value you obtain!
+
+<img src="./jasp.png" width="100%" style="display:block; margin:0 auto;"></img>
+
+
+
+
+## 11 -- Critical question
+_(Different?) student asking a critical question, looking confused?_
+
+> But teacher, that's _still_ not a lot of evidence in favour of $H_1$, is it?
+
+## 12 -- Conclusion
+_Sunday standing in front of class, show the backs of the heads of the class_
+
+> I agree! _p_-values down to 0.01 are never much more likely to occur under $H_0$ relative to $H_1$, even when we cheat to favour $H_1$. Beware of $p$-values larger than this, as the evidence for $H_1$ is not always as strong as it seems!
+
+## 13 -- Conclusion 2
+_Similar image_
+> What MPR value is enough for you to believe the result? That's for you to decide. Some choose to interpret this ratio as an upper bound to the _Bayes Factor_, but that's something for another time...
+
+> Thanks teacher!
