@@ -100,6 +100,13 @@ _See the panel idea in the drawing below. Here, $\mathcal{N}$ means normal distr
 
 > in world __A__ there is a medium effect and in __B__ there is no effect. We don't know which "world" we live in, but in our statistical test we obtain a _p_-value of 0.05 -- a "significant" difference. How much more likely is it that we receive this _p_-value from world __A__ than from __B__? We can use the _p_-value distributions!
 
+
+## 5 -- Closeup explanation
+_Closeup of Sunday's face (with in the background still this image?_
+
+> Because the y-axis in this plot indicates the probability of obtaining a certain _p_-value, we can immediately see the answer by looking at the ratio of probabilities: with a _p_-value of 0.05 it is 1.5 more likely that we are in world __A__. That does not seem such strong evidence in favour of world __A__!
+
+
 ```{r worlds, fig.width=5, fig.height=5, fig.align="center"}
 par(mar = c(4,5,3,1))
 plot(x2, dbeta(x2, 0.8, 1), 
@@ -123,11 +130,6 @@ mtext(side= 3, expression(bold("which world do inhabit?")), cex=1.5, line=0)
 mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
 mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
 ```
-
-## 5 -- Closeup explanation
-_Closeup of Sunday's face (with in the background still this image?_
-
-> Because the y-axis in this plot indicates the probability of obtaining a certain _p_-value, we can immediately see the answer by looking at the ratio of probabilities: with a _p_-value of 0.05 it is 1.5 more likely that we are in world __A__. That does not seem such strong evidence in favour of world __A__!
 
 ## 6 -- Class doesn't understand yet!
 _Class/student image asking a question, possibly with raised hand_
@@ -211,3 +213,8 @@ _Similar image_
 > What MPR value is enough for you to believe the result? That's for you to decide. Some choose to interpret this ratio as an upper bound to the _Bayes Factor_, but that's something for another time...
 
 > Thanks teacher!
+
+## 14 -- Plug
+_Simple text at the end_
+
+If you want to play around with the MPR interactively, go to shiny app.
