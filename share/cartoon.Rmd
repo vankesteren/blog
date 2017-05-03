@@ -125,7 +125,7 @@ points(x = c(0.05,0.05),
 text(x = 0.03, y = 4.5,labels = "World A", col = "dark green", cex = 1.5)
 text(x = 0.14, y = 0.7,labels = "World B", col = "dark blue", cex = 1.5)
 mtext(side= 3, expression(bold("We observe p=0.05,")), cex=1.5, line=1.5)
-mtext(side= 3, expression(bold("which world do inhabit?")), cex=1.5, line=0)
+mtext(side= 3, expression(bold("which world do we inhabit?")), cex=1.5, line=0)
                       
 mtext(side = 2, expression(italic("f")*"("*italic("p")*"|H)"), line = 1, las=1, cex = 1.5)
 mtext(side=1, expression(italic("p")*"-value"), line=1.5, cex=1.5)
