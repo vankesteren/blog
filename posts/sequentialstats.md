@@ -74,6 +74,58 @@ We can also see this as a form of bayesian updating, if we turn the formula arou
 
 Here, we set the prior to be $i \cdot m_{i-1}$, then we see $(x_i-m_{i-1})$ as our new data/evidence, $m_i$ is our posterior, and $i$ is the normalising constant. Cool!
 
+## Update: More efficient!
+The algorithm above translates nicely into the bayesian framework, but as with so many algorithms, it can be made much more efficient. It turns out that all we have to do is remember the `sum` of the values input in the stream and a counter `i` that indicates how many values went in. Then, when asking for the mean, all we need to do is $m_i=\frac{\texttt{sum}}{\texttt{i}}$. Simple!
+
+This is better for three reasons:
+
+1. It's simpler.
+2. It's less prone to numerical problems with your computer: you only perform one operation.
+3. This also extends to the variance and higher-order moments. For variance, we need to remember the `sum`, the `sum of squares`, and the counter `i`. Then, we can calculate the variance using the formula $Var(X) = E[X^2] - (E[X])^2$ to calculate the variance: $s^2_i=\frac{\texttt{sum of squares}}{\texttt{i}}-\left(\frac{\texttt{sum}}{\texttt{i}}\right)^2$. For each higher order moment, we need to remember a higher power sum in this framework.
+
+Let's do it!
+
+```r
+set.seed(3665364)
+# let's assume we receive data of length 1234
+streamlength <- 1234
+
+# initialise
+sum <- 0
+sumsq <- 0
+i <- 0
+
+for (j in 1:streamlength){
+  value <- rnorm(1,0,3)
+  sum <- sum + value
+  sumsq <- sumsq + value^2
+  i <- i+1
+}
+
+list(sum = sum, 
+     sum_of_squares = sumsq, 
+     i = i, 
+     mean = sum/i,
+     variance = sumsq/i - (sum/i)^2)
+```
+
+```
+## $sum
+## [1] -104.7634
+## 
+## $sum_of_squares
+## [1] 11547.45
+## 
+## $i
+## [1] 1234
+## 
+## $mean
+## [1] -0.08489741
+## 
+## $variance
+## [1] 9.35053
+```
+
 
 ## The question
 For the mean this was simple to implement. The question I'm pondering in the back of my mind throughout all this is the following: can _any_ statistic be transformed into such a sequential statistic? How does this work for variance? Standard deviation? The median / other quantiles? If you let me know, I'll be sure to update this blog post with the additions.
