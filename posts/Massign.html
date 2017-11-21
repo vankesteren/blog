@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Erik-Jan van Kesteren" />
+
+
+<title>Massign: Simple Matrix Construction in R</title>
+
+<script src="Massign_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="Massign_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="Massign_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="Massign_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="Massign_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="Massign_files/navigation-1.1/tabsets.js"></script>
+<script src="Massign_files/navigation-1.1/codefolding.js"></script>
+<link href="Massign_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="Massign_files/highlightjs-1.1/highlight.js"></script>
+<!DOCTYPE HTML>
+<link href="../img/favicon.png" rel="shortcut icon" type="image/png">
+<link href="../img/favicon.png" rel="apple-touch-icon" />
+
+<script type="application/json" class="js-hypothesis-config">
+  {
+    "showHighlights": false
+  }
+</script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Massign: Simple Matrix Construction in R</h1>
+<h4 class="author"><em>Erik-Jan van Kesteren</em></h4>
+
+</div>
+
+
+<div id="back-to-index" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+<div id="the-problem" class="section level2">
+<h2>The problem</h2>
+<p>I’m currently (finally) learning more about linear algebra, statistical optimisation, and other matrix-related topics. While learning about such abstract topics, for me it really helps to convert the material into small <code>R</code> programs. While doing this, I stumbled upon a problem: <strong>Matrix construction in <code>R</code> kind of sucks</strong>. Why? Look at this:</p>
+<pre class="r"><code>M &lt;- matrix(c(1, 0.2, -0.3, 0.4,
+              0.2, 1, 0.6, -0.4,
+              -0.3, 0.6, 1, 0.4,
+              0.4, -0.4, 0.4, 1),
+            nrow = 4,
+            ncol = 4,
+            byrow = TRUE)</code></pre>
+<p>If I want to create a matrix, I need to (a) create a full vector of values to put in the matrix, (b) decide into how many rows/columns I want to put these values, and (c) decide whether to fill these values in a columnwise (default) or rowwise manner. This last step in particular is a nuisance, because the default makes sure we cannot have any form of “what you see is what you get” (WYSIWYG) in our script.</p>
+</div>
+<div id="the-solution" class="section level2">
+<h2>The solution</h2>
+<p>To solve this issue for people who want to rapidly create legible matrices, I created the package <code>Massign</code>. This package has only one operator, <code>%&lt;-%</code>, and it works as follows to create the same matrix as above:</p>
+<pre class="r"><code>M %&lt;-% &quot;   1
+         0.2,    1
+        -0.3,  0.6,    1
+         0.4, -0.4,  0.4,    1&quot;</code></pre>
+<p>Neat right? There are a few features to it:</p>
+</div>
+<div id="wysiwyg-matrix-construction" class="section level2">
+<h2>WYSIWYG Matrix Construction</h2>
+<p>In it’s most basic form, <code>Massign</code> makes for legible code because of the “what you see is what you get” nature of the matrix construction function.</p>
+<pre class="r"><code>M %&lt;-% &quot;   1,  0.2, -0.3,  0.4
+         0.2,    1,  0.6, -0.4
+        -0.3,  0.6,    1,  0.4
+         0.4, -0.4,  0.4,    1&quot;
+M</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]  1.0  0.2 -0.3  0.4
+## [2,]  0.2  1.0  0.6 -0.4
+## [3,] -0.3  0.6  1.0  0.4
+## [4,]  0.4 -0.4  0.4  1.0</code></pre>
+</div>
+<div id="automatic-symmetric-construction" class="section level2">
+<h2>Automatic Symmetric Construction</h2>
+<p>As shown before, when you enter a lower triangular matrix, <code>Massign</code> automatically creates a symmetric matrix. This is a major feature, because properly creating the symmetric elements is not simple using the default <code>matrix()</code> function.</p>
+</div>
+<div id="variables-allowed" class="section level2">
+<h2>Variables Allowed</h2>
+<p>Because <code>Massign</code> constructs a <code>matrix()</code> call under the hood and evaluates it in the environment in which the function is called, it is allowed to enter variables inside the text string:</p>
+<pre class="r"><code>phi &lt;- 1.5
+M %&lt;-% &quot;1,     1,     1
+        1,   phi, phi^2
+        1, phi^2, phi^4&quot;
+M</code></pre>
+<pre><code>##      [,1] [,2]   [,3]
+## [1,]    1 1.00 1.0000
+## [2,]    1 1.50 2.2500
+## [3,]    1 2.25 5.0625</code></pre>
+<p>For the same reason, complex numbers work too. It does only work with numbers, though, so for character matrices you’re stuck with the <code>matrix()</code> function for now.</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>The <code>%&lt;-%</code> operator in <code>Massign</code> makes life a little easier for <code>R</code> programmers who want to quickly construct a relatively small matrix for prototyping or learning. Take this code piece for generating an 8-dimensional multivariate normal distribution with positive correlations:</p>
+<pre class="r"><code>library(Massign)
+library(MASS)
+
+S %&lt;-% &quot;  1,
+         .5,   1
+         .5,  .5,   1
+         .5,  .5,  .5,   1
+         .5,  .5,  .5,  .5,   1
+         .6,  .6,  .6,  .6,  .6,   1
+         .5,  .5,  .5,  .5,  .5,  .5,   1
+         .4,  .4,  .4,  .4,  .4,  .4,  .4,  1&quot;
+
+X &lt;- mvrnorm(10, mu = rep(0,8), Sigma = S)</code></pre>
+<p>The package is on <a href="https://cran.r-project.org/package=Massign">CRAN</a>, so you can install it as follows:</p>
+<pre class="r"><code>install.packages(&quot;Massign&quot;)</code></pre>
+<p>If you have any complaints, tips, issues, or suggestions, you can <a href="https://github.com/vankesteren/Massign/issues">submit an issue</a> on the project’s <a href="https://github.com/vankesteren/Massign">GitHub</a> page. Here you can also view the source code of the package!</p>
+<div id="back-to-index-1" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

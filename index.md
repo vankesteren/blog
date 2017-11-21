@@ -36,6 +36,11 @@
 [### How a deterministic machine generates random values]: #
 
 
+## [Massign](posts/Massign.html)
+
+#### Simple matrix construction in R
+
+
 ## [sequential statistics](posts/sequentialstats.html)
 
 #### How to calculate the mean of a value stream
@@ -67,7 +72,7 @@
 
 <hr/>
 
-I am a graduate student at Utrecht University, finishing my MSc in Methodology and Statistics. You can get more information about me at my [linkedin](https://www.linkedin.com/in/erikjanvankesteren) and my [github](https://github.com/vankesteren/) accounts. If you want to get in contact, you can use my <script type="text/javascript">
+I am a PhD student under [Daniel Oberski](http://daob.nl) at the Methodology and Statistics department of Utrecht University. My research is on how we can incorporate high-dimensional data into structural equation models. I'm also a part-time programmer at [JASP](https://jasp-stats.org). You can get more information about me at my [linkedin](https://www.linkedin.com/in/erikjanvankesteren) and my [github](https://github.com/vankesteren/) accounts. If you want to get in contact, you can use my <script type="text/javascript">
 //<![CDATA[
 <!--
 var x="function f(x){var i,o=\"\",ol=x.length,l=ol;while(x.charCodeAt(l/13)!" +
@@ -86,9 +91,9 @@ while(x=eval(x));
 <br/>
 
 Here are some links to statistics-related things I enjoy: 
-[JASP](https://jasp-stats.org),
 [Young Statisticians Netherlands](http://youngstatisticians.nl),
 [Explained Visually](http://setosa.io/ev/),
+[distill journal](http://distill.pub),
 [Brilliantly Wrong](https://arogozhnikov.github.io/),
 [The Etz-Files](https://alexanderetz.com/),
 [Richard Morey](https://richarddmorey.org/),
