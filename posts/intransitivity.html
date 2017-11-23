@@ -177,7 +177,7 @@ blockquote {
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>There is an exciting field in Bayesian statistics all about testing <em>Informative Hypotheses</em> <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. In a few words, these hypotheses concern order restrictions: <em>“I think that my treatment group will have lower levels of depression than my control group”</em>. These order restrictions can also concern more than two groups. In fact, the hypothesis can be an arbitrarily large set of <em>greater than</em> (<span class="math inline">\(&gt;\)</span>), <em>smaller than</em> (<span class="math inline">\(&lt;\)</span>), and <em>equality</em> constraints (<span class="math inline">\(=\)</span>), and it can be about any number of parameters in a statistical model.</p>
-<p>Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for <em>transitivity</em>. An example: if your hypothesis states that <span class="math inline">\(A&gt;B\)</span> and <span class="math inline">\(B&gt;C\)</span> then it is impossible under this hypothesis that <span class="math inline">\(C&gt;B\)</span> or that <span class="math inline">\(C=B\)</span>. I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.</p>
+<p>Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for <em>transitivity</em>. An example: if your hypothesis states that <span class="math inline">\(A&gt;B\)</span> and <span class="math inline">\(B&gt;C\)</span> then it is impossible under this hypothesis that <span class="math inline">\(C&gt;B\)</span> or that <span class="math inline">\(C=B\)</span>. The most famous intransitive relationship: rock-paper-scissors! I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.</p>
 </div>
 <div id="step-1-some-simplifications" class="section level2">
 <h2>Step 1: some simplifications</h2>
@@ -297,8 +297,8 @@ A &lt;- matrix(rbinom(1e2L^2, 1, 0.001), nrow = 1e2L)
 diag(A) &lt;- rep(0,1e2L)
 microbenchmark(isAcyclic(A), unit = &quot;ms&quot;, times = 10L)
 ## Unit: milliseconds
-##          expr     min       lq     mean   median       uq      max neval
-##  isAcyclic(A) 476.729 491.4323 514.0765 503.7007 515.8206 583.7331    10</code></pre>
+##          expr      min       lq     mean   median       uq      max neval
+##  isAcyclic(A) 499.1712 506.3708 520.1494 522.3296 523.5697 563.7928    10</code></pre>
 <p>we have between 500 and 600 milliseconds for this <span class="math inline">\(100\times 100\)</span> matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at <span class="math inline">\(10\times 10\)</span> matrices maximum, one row for each parameter not equal to another paramter in the hypothesis.</p>
 </div>
 <div id="step-5-neat-side-effect" class="section level2">

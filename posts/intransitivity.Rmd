@@ -43,7 +43,7 @@ There is an exciting field in Bayesian statistics all about testing _Informative
 
 [^inf]: https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/
 
-Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
+Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. The most famous intransitive relationship: rock-paper-scissors! I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
 
 ## Step 1: some simplifications
 We can represent an informative hypothesis as a set of pairwise constraints. A pairwise table with on the left hand side (lhs) and right hand side (rhs) the parameters of interest and in the center one of the three available operators (op) would look like this:

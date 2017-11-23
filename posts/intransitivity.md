@@ -27,7 +27,7 @@ There is an exciting field in Bayesian statistics all about testing _Informative
 
 [^inf]: https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/
 
-Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
+Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. The most famous intransitive relationship: rock-paper-scissors! I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
 
 ## Step 1: some simplifications
 We can represent an informative hypothesis as a set of pairwise constraints. A pairwise table with on the left hand side (lhs) and right hand side (rhs) the parameters of interest and in the center one of the three available operators (op) would look like this:
@@ -114,8 +114,8 @@ A <- matrix(rbinom(1e2L^2, 1, 0.001), nrow = 1e2L)
 diag(A) <- rep(0,1e2L)
 microbenchmark(isAcyclic(A), unit = "ms", times = 10L)
 ## Unit: milliseconds
-##          expr     min       lq     mean   median       uq      max neval
-##  isAcyclic(A) 476.729 491.4323 514.0765 503.7007 515.8206 583.7331    10
+##          expr      min       lq     mean   median       uq      max neval
+##  isAcyclic(A) 499.1712 506.3708 520.1494 522.3296 523.5697 563.7928    10
 ```
 
 we have between 500 and 600 milliseconds for this $100\times 100$ matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at $10\times 10$ matrices maximum, one row for each parameter not equal to another paramter in the hypothesis.
