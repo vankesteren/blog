@@ -48,6 +48,10 @@ output:
 
 [### How a deterministic machine generates random values]: #
 
+## [intransitivity checker](posts/intransitivity.html)
+
+#### A graph-based algorithm for assessing intransitivity
+
 
 ## [Massign](posts/Massign.html)
 

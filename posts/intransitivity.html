@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Erik-Jan van Kesteren" />
+
+
+<title>An Algorithm for Assessing Intransitivity</title>
+
+<script src="intransitivity_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="intransitivity_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="intransitivity_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="intransitivity_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="intransitivity_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="intransitivity_files/navigation-1.1/tabsets.js"></script>
+<script src="intransitivity_files/navigation-1.1/codefolding.js"></script>
+<link href="intransitivity_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="intransitivity_files/highlightjs-1.1/highlight.js"></script>
+<!DOCTYPE HTML>
+<link href="../img/favicon.png" rel="shortcut icon" type="image/png">
+<link href="../img/favicon.png" rel="apple-touch-icon" />
+
+<script type="application/json" class="js-hypothesis-config">
+  {
+    "showHighlights": false
+  }
+</script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">An Algorithm for Assessing Intransitivity</h1>
+<h4 class="author"><em>Erik-Jan van Kesteren</em></h4>
+
+</div>
+
+
+<style type="text/css">
+.table {
+
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+
+}
+blockquote {
+
+    font-size: 1em;
+  
+}
+</style>
+<div id="back-to-index" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>There is an exciting field in Bayesian statistics all about testing <em>Informative Hypotheses</em> <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. In a few words, these hypotheses concern order restrictions: <em>“I think that my treatment group will have lower levels of depression than my control group”</em>. These order restrictions can also concern more than two groups. In fact, the hypothesis can be an arbitrarily large set of <em>greater than</em> (<span class="math inline">\(&gt;\)</span>), <em>smaller than</em> (<span class="math inline">\(&lt;\)</span>), and <em>equality</em> constraints (<span class="math inline">\(=\)</span>), and it can be about any number of parameters in a statistical model.</p>
+<p>Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for <em>transitivity</em>. An example: if your hypothesis states that <span class="math inline">\(A&gt;B\)</span> and <span class="math inline">\(B&gt;C\)</span> then it is impossible under this hypothesis that <span class="math inline">\(C&gt;B\)</span> or that <span class="math inline">\(C=B\)</span>. I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.</p>
+</div>
+<div id="step-1-some-simplifications" class="section level2">
+<h2>Step 1: some simplifications</h2>
+<p>We can represent an informative hypothesis as a set of pairwise constraints. A pairwise table with on the left hand side (lhs) and right hand side (rhs) the parameters of interest and in the center one of the three available operators (op) would look like this:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">lhs</th>
+<th align="center">op</th>
+<th align="right">rhs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="center">&gt;</td>
+<td align="right">B</td>
+</tr>
+<tr class="even">
+<td align="left">B</td>
+<td align="center">=</td>
+<td align="right">C</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="center">&gt;</td>
+<td align="right">D</td>
+</tr>
+<tr class="even">
+<td align="left">E</td>
+<td align="center">&lt;</td>
+<td align="right">D</td>
+</tr>
+<tr class="odd">
+<td align="left">B</td>
+<td align="center">&lt;</td>
+<td align="right">E</td>
+</tr>
+</tbody>
+</table>
+<p>You may notice that this pairwise table makes for an <em>intransitive</em> informative hypothesis: B cannot be smaller than E if it is also greater than D, which in turn is greater than E <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<p>There are 2 observations to be made:</p>
+<ol style="list-style-type: decimal">
+<li>We actually don’t have three operators <span class="math inline">\(\{&lt;, &gt;, =\}\)</span>, but only two: <span class="math inline">\(\{&gt;, =\}\)</span>. For any <span class="math inline">\(&lt;\)</span> row in the table, we can simply switch around the lhs and rhs columns.</li>
+<li>For the purpose of checking transitivity, the <span class="math inline">\(=\)</span> relation is fundamentally different than the <span class="math inline">\(&gt;\)</span> relation. In fact, we can remove all <span class="math inline">\(=\)</span> relations in the pairwise tables by iteratively replacing the associated lhs and rhs parameters of interest in the entire table with the value (lhs,rhs) and removing the original <span class="math inline">\(=\)</span> relation.</li>
+</ol>
+<p>Incorporating the above two observations into the table, we obtain the following transitivity-equivalent pairwise table:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">lhs</th>
+<th align="center">op</th>
+<th align="right">rhs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="center">&gt;</td>
+<td align="right">(B,C)</td>
+</tr>
+<tr class="even">
+<td align="left">(B,C)</td>
+<td align="center">&gt;</td>
+<td align="right">D</td>
+</tr>
+<tr class="odd">
+<td align="left">D</td>
+<td align="center">&gt;</td>
+<td align="right">E</td>
+</tr>
+<tr class="even">
+<td align="left">E</td>
+<td align="center">&gt;</td>
+<td align="right">B</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="step-2-a-graphical-representation" class="section level2">
+<h2>Step 2: A graphical representation</h2>
+<p>From this, I realised we can turn it into a graph. We have a set of vertices <span class="math inline">\(\{A, (B,C), D, E\}\)</span> and a set of edges <span class="math inline">\(\{A\rightarrow (B,C),(B,C)\rightarrow D, D \rightarrow E, E \rightarrow B\}\)</span>. Here is the resulting graph:</p>
+<p><br> <img src="intransitivity.svg" width="50%" style="display:block;margin-left:auto;margin-right:auto;"></img> <br></p>
+<p>Now that we have a graph, there is one key observation we can make: <strong>if the graph is cyclic, the relation is intransitive, and if the graph is acyclic, the relation is transitive</strong>. Think about it in terms of rock-paper-scissors again: scissors beats paper, paper beats rock, but rock beats scissors. Or, if you like pokémon: grass beats water, water beats fire, fire beats grass. I never thought this relationship, extremely ingrained into my brain due to my many hours of playing as a kid, would be useful in real life. But I digress.</p>
+</div>
+<div id="step-3-checking-for-intransitivity" class="section level2">
+<h2>Step 3: Checking for intransitivity</h2>
+<p>We can represent a graph in a different way: as an adjacency matrix. In this <span class="math inline">\(p\times p\)</span> matrix <span class="math inline">\(\boldsymbol{A}\)</span>, where <span class="math inline">\(p\)</span> stands for the number of vertices in the graph, element <span class="math inline">\(a_{ij}=1\)</span> if a directional relation from vertex <span class="math inline">\(i\)</span> to vertex <span class="math inline">\(j\)</span> and <span class="math inline">\(0\)</span> otherwise. The adjacency matrix for our informative hypothesis example is as follows:</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+0 &amp; 1 &amp; 0 &amp; 0
+\end{bmatrix}
+\]</span> The elements correspond to the vertices <span class="math inline">\(\{A, (B,C), D, E\}\)</span> in order.</p>
+<p>So why would we want to do this? With the adjacency matrix <span class="math inline">\(\boldsymbol{A}\)</span>, we can easily check whether the graph is a directed acyclic graph or DAG, and hence whether the hypothesis is transitive. <a href="https://math.stackexchange.com/questions/513288/test-for-acyclic-graph-property-based-on-adjacency-matrix#answer-513305">This stackexchange answer by Dan Shved</a> sums it up nicely:</p>
+<blockquote cite="https://math.stackexchange.com/questions/513288/test-for-acyclic-graph-property-based-on-adjacency-matrix#answer-513305">
+The graph is a DAG if and only if each matrix <span class="math inline">\(\boldsymbol{A}^n\)</span>, <span class="math inline">\(n&gt;0\)</span>, has only zeroes on the main diagonal. […] The test includes an infinite number of matrices <span class="math inline">\(\boldsymbol{A}^n\)</span>, one for each natural <span class="math inline">\(n\)</span>. In practice it is enough to check each <span class="math inline">\(n\)</span> from 1 up to the number of vertices in the graph, inclusive.
+</blockquote>
+</div>
+<div id="step-4-implementation" class="section level2">
+<h2>Step 4: Implementation</h2>
+<p>Let’s program a proof of concept and see if it works!</p>
+<pre class="r"><code>library(expm)
+isAcyclic &lt;- function(amat) {
+  for (n in 1:ncol(amat)) {
+    if (any(diag(amat %^% n) != 0)) return(FALSE)
+  }
+  TRUE
+}</code></pre>
+<p>That’s a short and neat program. It does exactly what the stack exchange answer told us to do: it checks for the exponent up to <span class="math inline">\(p\)</span> whether there are nonzero elements on the diagonal. If it finds one, it quits and returns <code>FALSE</code>, otherwise it returns <code>TRUE</code>. It’s ok fast too, for realistic problems where users enter a pairlist of parameter inequalities:</p>
+<pre class="r"><code>library(microbenchmark)
+# let&#39;s construct a 100x100 matrix
+set.seed(147852)
+A &lt;- matrix(rbinom(1e2L^2, 1, 0.001), nrow = 1e2L)
+diag(A) &lt;- rep(0,1e2L)
+microbenchmark(isAcyclic(A), unit = &quot;ms&quot;, times = 10L)
+## Unit: milliseconds
+##          expr     min       lq     mean   median       uq      max neval
+##  isAcyclic(A) 476.729 491.4323 514.0765 503.7007 515.8206 583.7331    10</code></pre>
+<p>we have between 500 and 600 milliseconds for this <span class="math inline">\(100\times 100\)</span> matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at <span class="math inline">\(10\times 10\)</span> matrices maximum, one row for each parameter not equal to another paramter in the hypothesis.</p>
+</div>
+<div id="step-5-neat-side-effect" class="section level2">
+<h2>Step 5: Neat side-effect</h2>
+<p>Actually, I haven’t told you all there is to something as seemingly simple as an adjacency matrix; it’s a great tool. The exponent <span class="math inline">\(n\)</span> of the adjacency matrix actually indicates for each vertex <em>where you can reach in <span class="math inline">\(n\)</span> steps</em>. So for <span class="math inline">\(n=1\)</span> that is of course the adjacency itself, but for <span class="math inline">\(n=2\)</span> the adjacency matrix indicates which vertices you can reach with 2 steps. So when there is a <span class="math inline">\(1\)</span> on the diagonal, the associated exponent <span class="math inline">\(n\)</span> actually indicates <em>how many steps it takes to come back to yourself</em>! This means that we could provide the user with feedback on which vertices are involved in the intransitivity, by checking which element on the diagonal is not equal to 0 like so:</p>
+<pre class="r"><code>acyclicTest &lt;- function(amat) {
+  # input: adjacency matrix
+  # output: length 0 vector if it&#39;s acyclic (transitivity holds)
+  #         Vector of vertex names if intransitive
+  for (i in 1:ncol(amat)) {
+    d &lt;- diag(amat %^% i)
+    if (any(d != 0)) {
+      return(colnames(amat)[which(d!=0)])
+    }
+  }
+  character(0)
+}</code></pre>
+<p>So let’s apply it to our example inequality constrained informative hypothesis:</p>
+<pre class="r"><code>library(Massign)
+A %&lt;-% &quot;0, 1, 0, 0
+        0, 0, 1, 0
+        0, 0, 0, 1
+        0, 1, 0, 0&quot;
+colnames(A) &lt;- rownames(A) &lt;- c(&quot;A&quot;, &quot;B,C&quot;, &quot;D&quot;, &quot;E&quot;)
+
+test &lt;- acyclicTest(A)
+
+if (length(test) != 0) {
+  paste(&quot;Intransitivity detected in: {&quot;, paste(test, collapse = &quot;,&quot;), &quot;}&quot;)
+}
+## [1] &quot;Intransitivity detected in: { B,C,D,E }&quot;</code></pre>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>This is a highly experimental and non-optimised algorithm. Tell me what you think about it! I think it’s neat and shows how flexible graphs and adjacency matrices are for many different and unexpected applications.</p>
+<p>Thanks to <a href="http://www.uva.nl/en/profile/s/a/a.s.g.sarafoglou/a.s.g.sarafoglou.html">Alexandra Sarafoglou</a> for brainstorming!</p>
+<div id="back-to-index-1" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/" class="uri">https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>The conclusion from testing this hypothesis can be simple: the probability of the hypothesis relative to any other hypothesis with even the slightest probability is exactly 0. Thus the bayes factor is 0, we don’t even need to perform our experiment, and we can get on with our lives.<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

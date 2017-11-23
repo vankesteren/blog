@@ -35,6 +35,10 @@
 
 [### How a deterministic machine generates random values]: #
 
+## [intransitivity checker](posts/intransitivity.html)
+
+#### A graph-based algorithm for assessing intransitivity
+
 
 ## [Massign](posts/Massign.html)
 
@@ -90,7 +94,7 @@ while(x=eval(x));
 </script>
 <br/>
 
-Here are some links to statistics-related things I enjoy: 
+Here are some links to statistics-related things I enjoy:
 [Young Statisticians Netherlands](http://youngstatisticians.nl),
 [Explained Visually](http://setosa.io/ev/),
 [distill journal](http://distill.pub),

@@ -1,0 +1,176 @@
+---
+title: "An Algorithm for Assessing Intransitivity"
+author: "Erik-Jan van Kesteren"
+output:
+  html_document:
+    code_folding: show
+    includes:
+      in_header: postheader.html
+    keep_md: yes
+    self_contained: no
+    theme: journal
+---
+
+```{r setup, include=FALSE, echo=FALSE,render=FALSE,warning=FALSE,background=TRUE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dev = 'svg')
+library(expm)
+library(Massign)
+library(microbenchmark)
+```
+
+<style type="text/css">
+.table {
+
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+
+}
+blockquote {
+
+    font-size: 1em;
+  
+}
+</style>
+
+###[Back to index](../index.html)
+
+
+
+## Introduction
+There is an exciting field in Bayesian statistics all about testing _Informative Hypotheses_ [^inf]. In a few words, these hypotheses concern order restrictions: _"I think that my treatment group will have lower levels of depression than my control group"_. These order restrictions can also concern more than two groups. In fact, the hypothesis can be an arbitrarily large set of _greater than_ ($>$), _smaller than_ ($<$), and _equality_ constraints ($=$), and it can be about any number of parameters in a statistical model. 
+
+[^inf]: https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/
+
+Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
+
+## Step 1: some simplifications
+We can represent an informative hypothesis as a set of pairwise constraints. A pairwise table with on the left hand side (lhs) and right hand side (rhs) the parameters of interest and in the center one of the three available operators (op) would look like this:
+
+|lhs| op |rhs|
+|:--|:--:|--:|
+| A | >  | B |
+| B | =  | C |
+| C | >  | D |
+| E | <  | D |
+| B | <  | E |
+
+You may notice that this pairwise table makes for an _intransitive_ informative hypothesis: B cannot be smaller than E if it is also greater than D, which in turn is greater than E [^bf].
+
+[^bf]: The conclusion from testing this hypothesis can be simple: the probability of the hypothesis relative to any other hypothesis with even the slightest probability is exactly 0. Thus the bayes factor is 0, we don't even need to perform our experiment, and we can get on with our lives.
+
+There are 2 observations to be made:
+
+1. We actually don't have three operators $\{<, >, =\}$, but only two: $\{>, =\}$. For any $<$ row in the table, we can simply switch around the lhs and rhs columns.
+2. For the purpose of checking transitivity, the $=$ relation is fundamentally different than the $>$ relation. In fact, we can remove all $=$ relations in the pairwise tables by iteratively replacing the associated lhs and rhs parameters of interest in the entire table with the value (lhs,rhs) and removing the original $=$ relation.
+
+Incorporating the above two observations into the table, we obtain the following transitivity-equivalent pairwise table:
+
+|lhs| op |rhs|
+|:--|:--:|--:|
+| A | >  | (B,C) |
+| (B,C) | >  | D |
+| D | >  | E |
+| E | >  | B |
+
+## Step 2: A graphical representation
+
+From this, I realised we can turn it into a graph. We have a set of vertices $\{A, (B,C), D, E\}$ and a set of edges $\{A\rightarrow (B,C),(B,C)\rightarrow D, D \rightarrow E, E \rightarrow B\}$. Here is the resulting graph:
+
+<br>
+<img src="intransitivity.svg" width="50%" style="display:block;margin-left:auto;margin-right:auto;"></img>
+<br>
+
+Now that we have a graph, there is one key observation we can make: __if the graph is cyclic, the relation is intransitive, and if the graph is acyclic, the relation is transitive__. Think about it in terms of rock-paper-scissors again: scissors beats paper, paper beats rock, but rock beats scissors. Or, if you like pokémon: grass beats water, water beats fire, fire beats grass. I never thought this relationship, extremely ingrained into my brain due to my many hours of playing as a kid, would be useful in real life. But I digress.
+
+## Step 3: Checking for intransitivity
+We can represent a graph in a different way: as an adjacency matrix. In this $p\times p$ matrix $\boldsymbol{A}$, where $p$ stands for the number of vertices in the graph, element $a_{ij}=1$ if a directional relation from vertex $i$ to vertex $j$ and $0$ otherwise. The adjacency matrix for our informative hypothesis example is as follows:
+
+$$
+\begin{bmatrix}
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 1 & 0 & 0
+\end{bmatrix}
+$$
+The elements correspond to the vertices $\{A, (B,C), D, E\}$ in order.
+
+So why would we want to do this? With the adjacency matrix $\boldsymbol{A}$, we can easily check whether the graph is a directed acyclic graph or DAG, and hence whether the hypothesis is transitive. [This stackexchange answer by Dan Shved](https://math.stackexchange.com/questions/513288/test-for-acyclic-graph-property-based-on-adjacency-matrix#answer-513305) sums it up nicely:
+
+<blockquote cite="https://math.stackexchange.com/questions/513288/test-for-acyclic-graph-property-based-on-adjacency-matrix#answer-513305">
+The graph is a DAG if and only if each matrix $\boldsymbol{A}^n$, $n>0$, has only zeroes on the main diagonal. [...] The test includes an infinite number of matrices $\boldsymbol{A}^n$, one for each natural $n$. In practice it is enough to check each $n$ from 1 up to the number of vertices in the graph, inclusive.
+</blockquote>
+
+
+## Step 4: Implementation
+
+Let's program a proof of concept and see if it works!
+
+```{r isAcyclic, collapse=FALSE}
+library(expm)
+isAcyclic <- function(amat) {
+  for (n in 1:ncol(amat)) {
+    if (any(diag(amat %^% n) != 0)) return(FALSE)
+  }
+  TRUE
+}
+```
+
+That's a short and neat program. It does exactly what the stack exchange answer told us to do: it checks for the exponent up to $p$ whether there are nonzero elements on the diagonal. If it finds one, it quits and returns `FALSE`, otherwise it returns `TRUE`. It's ok fast too, for realistic problems where users enter a pairlist of parameter inequalities:
+
+```{r performance, collapse=TRUE}
+library(microbenchmark)
+# let's construct a 100x100 matrix
+set.seed(147852)
+A <- matrix(rbinom(1e2L^2, 1, 0.001), nrow = 1e2L)
+diag(A) <- rep(0,1e2L)
+microbenchmark(isAcyclic(A), unit = "ms", times = 10L)
+```
+
+we have between 500 and 600 milliseconds for this $100\times 100$ matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at $10\times 10$ matrices maximum, one row for each parameter not equal to another paramter in the hypothesis.
+
+## Step 5: Neat side-effect
+
+Actually, I haven't told you all there is to something as seemingly simple as an adjacency matrix; it's a great tool. The exponent $n$ of the adjacency matrix actually indicates for each vertex _where you can reach in $n$ steps_. So for $n=1$ that is of course the adjacency itself, but for $n=2$ the adjacency matrix indicates which vertices you can reach with 2 steps. So when there is a $1$ on the diagonal, the associated exponent $n$ actually indicates _how many steps it takes to come back to yourself_! This means that we could provide the user with feedback on which vertices are involved in the intransitivity, by checking which element on the diagonal is not equal to 0 like so:
+
+```{r acyclicTest, collapse=FALSE}
+acyclicTest <- function(amat) {
+  # input: adjacency matrix
+  # output: length 0 vector if it's acyclic (transitivity holds)
+  #         Vector of vertex names if intransitive
+  for (i in 1:ncol(amat)) {
+    d <- diag(amat %^% i)
+    if (any(d != 0)) {
+      return(colnames(amat)[which(d!=0)])
+    }
+  }
+  character(0)
+}
+```
+
+So let's apply it to our example inequality constrained informative hypothesis:
+```{r apply, collapse=TRUE}
+library(Massign)
+A %<-% "0, 1, 0, 0
+        0, 0, 1, 0
+        0, 0, 0, 1
+        0, 1, 0, 0"
+colnames(A) <- rownames(A) <- c("A", "B,C", "D", "E")
+
+test <- acyclicTest(A)
+
+if (length(test) != 0) {
+  paste("Intransitivity detected in: {", paste(test, collapse = ","), "}")
+}
+
+```
+
+## Conclusion
+This is a highly experimental and non-optimised algorithm. Tell me what you think about it! I think it's neat and shows how flexible graphs and adjacency matrices are for many different and unexpected applications.
+
+Thanks to [Alexandra Sarafoglou](http://www.uva.nl/en/profile/s/a/a.s.g.sarafoglou/a.s.g.sarafoglou.html) for brainstorming!
+
+
+###[Back to index](../index.html)
