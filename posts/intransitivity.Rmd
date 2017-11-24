@@ -43,7 +43,7 @@ There is an exciting field in Bayesian statistics all about testing _Informative
 
 [^inf]: https://informative-hypotheses.sites.uu.nl/publications/methodological-papers/
 
-Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>B$ or that $C=B$. The most famous intransitive relationship: rock-paper-scissors! I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
+Any software project implementing these user-definable arbitrarily complex hypotheses will need to check for _transitivity_. An example: if your hypothesis states that $A>B$ and $B>C$ then it is impossible under this hypothesis that $C>A$ or that $C=A$. The most famous intransitive relationship: rock-paper-scissors! I recently received the task to figure out a way of assessing whether a set of pairwise constraints is intransitive. This blogpost is about the algorithm I came up with for performing that task.
 
 ## Step 1: some simplifications
 We can represent an informative hypothesis as a set of pairwise constraints. A pairwise table with on the left hand side (lhs) and right hand side (rhs) the parameters of interest and in the center one of the three available operators (op) would look like this:
@@ -129,11 +129,11 @@ diag(A) <- rep(0,1e2L)
 microbenchmark(isAcyclic(A), unit = "ms", times = 10L)
 ```
 
-we have between 500 and 600 milliseconds for this $100\times 100$ matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at $10\times 10$ matrices maximum, one row for each parameter not equal to another paramter in the hypothesis.
+we have between 500 and 600 milliseconds for this $100\times 100$ matrix which is acyclic, so the function actually has to run the 100 exponentiations. However, realistically we are usually looking at $10\times 10$ matrices maximum, one row for each parameter not equal to another parameter in the hypothesis.
 
 ## Step 5: Neat side-effect
 
-Actually, I haven't told you all there is to something as seemingly simple as an adjacency matrix; it's a great tool. The exponent $n$ of the adjacency matrix actually indicates for each vertex _where you can reach in $n$ steps_. So for $n=1$ that is of course the adjacency itself, but for $n=2$ the adjacency matrix indicates which vertices you can reach with 2 steps. So when there is a $1$ on the diagonal, the associated exponent $n$ actually indicates _how many steps it takes to come back to yourself_! This means that we could provide the user with feedback on which vertices are involved in the intransitivity, by checking which element on the diagonal is not equal to 0 like so:
+Actually, I haven't told you all there is to something as seemingly simple as an adjacency matrix; it's a great tool. The exponent $n$ of the adjacency matrix actually indicates for each vertex _where you can reach in $n$ steps_. So for $n=1$ that is of course the adjacency itself, but for $n=2$ the adjacency matrix indicates which vertices you can reach with 2 steps. So when there is a $1$ on the diagonal, the associated exponent $n$ actually indicates _how many steps it takes to come back to the original vertex_! This means that we could provide the user with feedback on which vertices are involved in the intransitivity, by checking which element on the diagonal is not equal to 0 like so:
 
 ```{r acyclicTest, collapse=FALSE}
 acyclicTest <- function(amat) {
