@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Erik-Jan van Kesteren" />
+
+
+<title>Multiple regression via coordinate descent</title>
+
+<script src="coordinate_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="coordinate_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="coordinate_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="coordinate_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="coordinate_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="coordinate_files/navigation-1.1/tabsets.js"></script>
+<script src="coordinate_files/navigation-1.1/codefolding.js"></script>
+<link href="coordinate_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="coordinate_files/highlightjs-1.1/highlight.js"></script>
+<!DOCTYPE HTML>
+<link href="../img/favicon.png" rel="shortcut icon" type="image/png">
+<link href="../img/favicon.png" rel="apple-touch-icon" />
+
+<script type="application/json" class="js-hypothesis-config">
+  {
+    "showHighlights": false
+  }
+</script>
+
+<script>
+    (function ($) {
+        if ($(window).width() >= 768) {
+            url = "https://hypothes.is/embed.js";
+            $.getScript(url);
+        }
+    })(jQuery);
+</script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Multiple regression via coordinate descent</h1>
+<h4 class="author"><em>Erik-Jan van Kesteren</em></h4>
+
+</div>
+
+
+<style type="text/css">
+  .table {
+  
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+  
+  }
+  blockquote {
+  
+      font-size: 1em;
+    
+  }
+</style>
+<div id="back-to-index" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This blog is about multiple regression, where we seek to estimate the relation between variables in a data matrix <span class="math inline">\(\boldsymbol{X}\)</span> and an outcome vector <span class="math inline">\(\boldsymbol{y}\)</span>:</p>
+<p><span class="math display">\[\boldsymbol{y} = \boldsymbol{X}\boldsymbol{\beta}+\boldsymbol{\epsilon}\]</span></p>
+<p>Intuitively, the goal is to estimate <span class="math inline">\(\boldsymbol{\beta}\)</span> such that the sum of squared error terms <span class="math inline">\(\boldsymbol{\epsilon}&#39;\boldsymbol{\epsilon}\)</span> is minimal<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. In multiple regression, the regression parameters can be very quickly estimated from data using the ordinary least squares (OLS) estimator:</p>
+<p><span class="math display">\[\hat{\boldsymbol{\beta}} = (\boldsymbol{X}&#39;\boldsymbol{X})^{-1}\boldsymbol{X}&#39;\boldsymbol{y}\]</span></p>
+<p>I have always found the simplicity of the formula almost magical. In <code>R</code>, the fastest implementation of the above formula I’ve found is the following:</p>
+<pre class="r"><code>betahat &lt;- solve(crossprod(X), crossprod(X, y))</code></pre>
+<p>In this blog post, I will outline and show an even more magical method to obtain the same parameter estimates: coordinate descent. The main advantage is that it does not require any matrix inversion meaning that it works even when there are more variables than cases (the <span class="math inline">\(\boldsymbol{X}\)</span> matrix has more columns than rows).</p>
+</div>
+<div id="the-dataset" class="section level2">
+<h2>The dataset</h2>
+<p>You can skip this section and go straight to <a href="#coordinate-descent">the next section</a> if you are not interested in simulation.</p>
+<p>Let’s simulate an example dataset with 100 observations, 11 <span class="math inline">\(X\)</span> variables with covariance matrix <span class="math inline">\(S\)</span>, and a little error.</p>
+<pre class="r"><code>library(MASS)
+set.seed(142857)
+
+n &lt;- 100  # number of observations
+p &lt;- 11  # number of covariates
+
+# generate covariance matrix
+# (https://stats.stackexchange.com/a/215647/116878)
+P &lt;- qr.Q(qr(matrix(rnorm(p^2), p)))
+S &lt;- cov2cor(crossprod(P, P * (p:1)))
+
+# generate X
+X &lt;- mvrnorm(n = n, mu = rep(0, p), Sigma = S)
+
+# define a beta vector
+beta &lt;- seq(-1, 1, len = p)
+
+# generate residuals such that R^2 = 2/3
+e &lt;- rnorm(n = n, sd = 0.5 * sqrt(beta %*% S %*% beta))
+
+# generate y
+y &lt;- X %*% beta + e</code></pre>
+<p>In this generated dataset, the true <span class="math inline">\(\boldsymbol{\beta}\)</span> vector looks like this:</p>
+<pre class="r"><code>beta</code></pre>
+<pre><code>##  [1] -1.0 -0.8 -0.6 -0.4 -0.2  0.0  0.2  0.4  0.6  0.8  1.0</code></pre>
+</div>
+<div id="coordinate-descent" class="section level2">
+<h2>Coordinate descent</h2>
+<p>This algorithm splits the multivariate problem of estimating the vector <span class="math inline">\(\boldsymbol{\beta}\)</span> into a series of univariate problems of estimating each <span class="math inline">\(\beta_j\)</span> separately for <span class="math inline">\(j \in 1 \dots p\)</span>. It does this by performing univariate regression not on the original variable but on the residuals of <span class="math inline">\(\boldsymbol{y}\)</span> with respect to the remaining variables. So one step of the algorithm looks like this:</p>
+<p>For <span class="math inline">\(j \in 1 \dots p\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Calculate the residuals <span class="math display">\[\boldsymbol{y}_{res_j} = \boldsymbol{y} - \boldsymbol{X}_{-j}\hat{\boldsymbol{\beta}}_{-j}\]</span> where <span class="math inline">\(\boldsymbol{X}_{-j}\)</span> is the data matrix excluding column <span class="math inline">\(j\)</span> and <span class="math inline">\(\hat{\boldsymbol{\beta}}_{-j}\)</span> is the vector of current parameter estimates excluding <span class="math inline">\(\hat{\beta}_{j}\)</span>.</p></li>
+<li><p>Calculate <span class="math inline">\(\hat{\beta}_{j}\)</span> using simple linear regression on these residuals: <span class="math display">\[\hat{\beta}_{j} = (\boldsymbol{X}&#39;_j\boldsymbol{X}_j)^{-1}\boldsymbol{X}_j&#39;\boldsymbol{y}_{res_j} = \frac{\langle\boldsymbol{x}_j\,,\boldsymbol{y}_{res_j}\rangle}{\langle\boldsymbol{x}_j\,,\boldsymbol{x}_j\rangle}\]</span></p></li>
+</ol>
+<p>Note that the matrix inversion is replaced by a scalar inversion using inner products.</p>
+<p>In <code>R</code>, we can achieve this through a for loop:</p>
+<pre class="r"><code># initialise bhat as vector of 0s
+bhat &lt;- numeric(ncol(X))
+
+for (j in 1:length(bhat)) {
+  # calculate residuals w.r.t. remaining variables
+  yres &lt;- y - X[,-j] %*% bhat[-j]
+  # calculate current bhat using univariate regression of y_res on x_j
+  bhat[j] &lt;- crossprod(X[,j], yres) / crossprod(X[,j])
+}</code></pre>
+<p>With one step of this algorithm, we are not there yet. If we would perform another step with the first predictor, we would get a different value for <span class="math inline">\(\hat{\beta}_{1}\)</span> because now the residual will be different: <span class="math inline">\(\hat{\boldsymbol{\beta}}_{-j}\)</span> is not a vector of 0s as it was in the first step. This is why we cycle through the variables continuously until we arrive to a stable point, essentially wrapping the step in the <code>R</code> code above in another loop that checks for convergence:</p>
+<pre class="r"><code># init ----
+# initialise bhat as vector of 0s
+bhat &lt;- numeric(ncol(X))
+# control variables
+convergence &lt;- FALSE 
+tol &lt;- 1e-15 # tolerance or precision
+max.iter &lt;- 1000
+i &lt;- 0
+
+# Coordinate descent ----
+while (!convergence &amp;&amp; i &lt; max.iter) {
+  i &lt;- i + 1
+  bprev &lt;- bhat # remember previous beta estimate
+  
+  for (j in 1:length(bhat)) {
+    # calculate residuals w.r.t. remaining variables
+    yres &lt;- y - X[,-j] %*% bhat[-j]
+    # calculate current bhat using univariate regression of y_res on x_j
+    bhat[j] &lt;- crossprod(X[,j], yres) / crossprod(X[,j])
+  }
+  
+  # calculate squared difference to previous beta to determine convergence
+  dif &lt;- (bprev - bhat) %*% (bprev - bhat)
+  if (dif &lt; tol) convergence &lt;- TRUE
+}</code></pre>
+<p>So let’s compare the results with the OLS estimator</p>
+<pre class="r"><code>olsbhat &lt;- solve(crossprod(X), crossprod(X, y))
+olsbhat == bhat</code></pre>
+<pre><code>##        [,1]
+##  [1,] FALSE
+##  [2,] FALSE
+##  [3,] FALSE
+##  [4,] FALSE
+##  [5,] FALSE
+##  [6,] FALSE
+##  [7,] FALSE
+##  [8,] FALSE
+##  [9,] FALSE
+## [10,] FALSE
+## [11,] FALSE</code></pre>
+</div>
+<div id="multiple-regression-with-coordinate-descent" class="section level2">
+<h2>Multiple regression with coordinate descent</h2>
+<p>Let’s wrap it all in a function. Feel free to use it / adapt it in your work.</p>
+<pre class="r"><code>mrc &lt;- function(X, y, max.iter = 1000, tol = .Machine$double.eps) {
+  # Multiple regression using coordinate descent
+  # Input: X matrix, y vector
+  # Output: estimated beta vector
+  
+  # init ----
+  bhat &lt;- numeric(ncol(X))
+  convergence &lt;- FALSE
+  i &lt;- 0L
+  
+  # Coordinate descent ----
+  # calculate the sum of squares of each x
+  xss &lt;- apply(X, 2, crossprod)
+  
+  while (!convergence &amp;&amp; i &lt; max.iter) {
+    i &lt;- i + 1
+    bprev &lt;- bhat # remember previous beta estimate
+    
+    for (j in 1:length(bhat)) {
+      # calculate residuals w.r.t. remaining variables
+      yres &lt;- y - X[,-j] %*% bhat[-j]
+      # calculate current bhat using univariate regression of y_res on x_j
+      bhat[j] &lt;- t(X[,j]) %*% yres / xss[j]
+    }
+    
+    # calculate squared difference to determine convergence
+    dif &lt;- (bprev - bhat) %*% (bprev - bhat)
+    if (dif &lt; tol) convergence &lt;- TRUE
+  }
+  
+  if (!convergence) warning(&quot;Algorithm did not converge!&quot;)
+  
+  bhat
+}</code></pre>
+<div id="back-to-index-1" class="section level3">
+<h3><a href="../index.html">Back to index</a></h3>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>This is the <em>least squares</em> interpretation, which for this model coincides with likelihood-based methods.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

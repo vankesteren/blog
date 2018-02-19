@@ -16,6 +16,21 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(dev = 'svg')
 ```
 
+<style type="text/css">
+.table {
+
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+
+}
+blockquote {
+
+    font-size: 1em;
+  
+}
+</style>
+
 ###[Back to index](../index.html)
 
 
